@@ -1,0 +1,50 @@
+# ========== OS-Specific ==========
+.DS_Store
+Thumbs.db
+
+# ========== IDEs & Editors ==========
+*.iml
+.idea/
+.vscode/
+*.swp
+
+# ========== Build Files ==========
+/out/
+/bin/
+/build/
+/target/
+
+# ========== Logs ==========
+*.log
+
+# ========== Temporary Files ==========
+*.tmp
+*.temp
+*.bak
+
+# ========== Java Class Files ==========
+*.class
+
+# ========== Gradle ==========
+.gradle/
+/gradle/
+/build/
+
+# ========== Maven ==========
+/target/
+/pom.xml.tag
+/pom.xml.releaseBackup
+/pom.xml.versionsBackup
+/logs/
+release.properties
+
+# ========== Local Environment ==========
+.env
+*.local
+
+# ========== Game-Specific ==========
+
+
+
+# ========== Git LFS (optional, comment out if not using) ==========
+ *.txt filter=lfs diff=lfs merge=lfs -text

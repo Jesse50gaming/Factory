@@ -1,0 +1,6 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+*.psd filter=lfs diff=lfs merge=lfs -text
+*.generatedMap.txt filter=lfs diff=lfs merge=lfs -text
+*.txt filter=lfs diff=lfs merge=lfs -text
+factory/src/main/resources/maps/generatedMap.txt filter=lfs diff=lfs merge=lfs -text

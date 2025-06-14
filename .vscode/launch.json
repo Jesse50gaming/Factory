@@ -1,0 +1,21 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Game Default",
+            "request": "launch",
+            "mainClass": "com.factory.Main"
+        },
+        {
+            "type": "java",
+            "name": "Other",
+            "request": "launch",
+            "mainClass": "com.factory.Main",
+            "projectName": "Factory"
+        }
+    ]
+}
