@@ -52,7 +52,9 @@ public class TileManager {
 
         byte[][] map = new byte[MAP_WIDTH][MAP_HEIGHT];
         boolean[][] filled = new boolean[MAP_WIDTH][MAP_HEIGHT];
+        boolean[][] partOfBiome = new boolean[MAP_WIDTH][MAP_HEIGHT];
         Random rand = new Random();
+        
 
         // Set everything to unassigned
         for (int x = 0; x < MAP_WIDTH; x++) {
@@ -60,6 +62,7 @@ public class TileManager {
         }
 
         int unasignedCount = MAP_WIDTH * MAP_HEIGHT;
+        int unasignedBiomeCount = MAP_WIDTH * MAP_HEIGHT;
         int biomeID = 0;
 
         while (unasignedCount > 0) {
@@ -82,7 +85,7 @@ public class TileManager {
                 int x = point.x;
                 int y = point.y;
 
-                if (x < 0 || y < 0 || x >= MAP_WIDTH || y >= MAP_HEIGHT || filled[x][y]) {  // leaves loop if outside borders
+                if (x < 0 || y < 0 || x >= MAP_WIDTH || y >= MAP_HEIGHT || filled[x][y]) {  // skips if outside borders
                     continue; 
                 }
                     
@@ -111,6 +114,68 @@ public class TileManager {
         } // done with assigning biomes and tiles
 
         this.mapTileNumber = map;
+
+        while (unasignedBiomeCount > 0) {
+
+            int startX, startY;
+            do {
+                startX = rand.nextInt(MAP_WIDTH);
+                startY = rand.nextInt(MAP_HEIGHT);
+            } while (partOfBiome[startX][startY]); //keeps picking if filled
+
+            List<Point> biomePoints = new LinkedList<>();
+            byte biomeType = mapTileNumber[startX][startY];
+            Queue<Point> frontier = new LinkedList<>();
+            frontier.add(new Point(startX, startY));
+
+            int count = 0;
+            
+
+            while (!frontier.isEmpty()) {
+                Point point = frontier.poll();
+                int x = point.x;
+                int y = point.y;
+                
+
+                if (x < 0 || y < 0 || x >= MAP_WIDTH || y >= MAP_HEIGHT || partOfBiome[x][y]) {  // skips if outside borders
+                    continue; 
+                }
+
+                
+                biomePoints.add(point);
+                count++;
+
+                // random spreading
+                if (x + 1 < MAP_WIDTH && rand.nextBoolean() && mapTileNumber[x + 1][y] == biomeType) {
+                    frontier.add(new Point(x + 1, y));
+                }
+                if (x - 1 > MAP_WIDTH && rand.nextBoolean() && mapTileNumber[x-1][y] == biomeType) {
+                    frontier.add(new Point(x - 1, y));
+                }
+                if (y + 1 < MAP_HEIGHT && rand.nextBoolean() && mapTileNumber[x][y+1] == biomeType) {
+                    frontier.add(new Point(x, y + 1));
+                }
+                if (y - 1 > MAP_HEIGHT && rand.nextBoolean() && mapTileNumber[x][y - 1] == biomeType) {
+                    frontier.add(new Point(x, y - 1));
+                }
+
+            }
+
+            if (count >= BIOME_SIZE) {
+                for (Point point : biomePoints) {
+                    mapTileNumber[point.x][point.y] = biomeType;
+                    unasignedBiomeCount--;
+                    partOfBiome[point.x][point.y] = true;
+                }
+            } else {
+                for (Point point : biomePoints) {
+                    mapTileNumber[point.x][point.y] = (byte) (biomeID % BIOME_TYPE_COUNT); ;
+                }
+            }
+            
+
+        }
+
 
         // Create chunks (same as before)
         for (int chunkX = 0; chunkX < CHUNK_COLS; chunkX++) {
