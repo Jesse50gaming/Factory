@@ -47,7 +47,7 @@ public class TileManager {
     public void createMap() {
         final int MAP_WIDTH = CHUNK_SIZE * CHUNK_COLS;// tiles
         final int MAP_HEIGHT = CHUNK_SIZE * CHUNK_ROWS;
-        final int BIOME_SIZE = 1000; //each biome if uninterupted will have 1,000 tiles
+        final int BIOME_SIZE = 10000; //each biome if uninterupted will have 1,0000 tiles
         final int BIOME_TYPE_COUNT = 2;
 
         byte[][] map = new byte[MAP_WIDTH][MAP_HEIGHT];
@@ -69,7 +69,7 @@ public class TileManager {
             do {
                 startX = rand.nextInt(MAP_WIDTH);
                 startY = rand.nextInt(MAP_HEIGHT);
-            } while (filled[startX][startY]);
+            } while (filled[startX][startY]); //keeps picking if filled
 
             Queue<Point> frontier = new LinkedList<>();
             frontier.add(new Point(startX, startY));
@@ -78,12 +78,14 @@ public class TileManager {
             byte biomeType = (byte) (biomeID % BIOME_TYPE_COUNT);
 
             while (!frontier.isEmpty() && count < BIOME_SIZE) {
-                Point p = frontier.poll();
-                int x = p.x;
-                int y = p.y;
+                Point point = frontier.poll();
+                int x = point.x;
+                int y = point.y;
 
-                if (x < 0 || y < 0 || x >= MAP_WIDTH || y >= MAP_HEIGHT || filled[x][y])
-                    continue;
+                if (x < 0 || y < 0 || x >= MAP_WIDTH || y >= MAP_HEIGHT || filled[x][y]) {  // leaves loop if outside borders
+                    continue; 
+                }
+                    
 
                 map[x][y] = biomeType;
                 filled[x][y] = true;
@@ -91,14 +93,22 @@ public class TileManager {
                 count++;
 
                 // random spreading
-                if (rand.nextBoolean()) frontier.add(new Point(x + 1, y));
-                if (rand.nextBoolean()) frontier.add(new Point(x - 1, y));
-                if (rand.nextBoolean()) frontier.add(new Point(x, y + 1));
-                if (rand.nextBoolean()) frontier.add(new Point(x, y - 1));
+                if (rand.nextBoolean()) {
+                    frontier.add(new Point(x + 1, y));
+                }
+                if (rand.nextBoolean()) {
+                    frontier.add(new Point(x - 1, y));
+                }
+                if (rand.nextBoolean()) {
+                    frontier.add(new Point(x, y + 1));
+                }
+                if (rand.nextBoolean()) {
+                    frontier.add(new Point(x, y - 1));
+                }
             }
 
             biomeID++;
-        }
+        } // done with assigning biomes and tiles
 
         this.mapTileNumber = map;
 
