@@ -14,8 +14,10 @@ public class TileManager {
 
     private HashMap<String, BufferedImage> cache = new HashMap<>();
     GamePanel gp;
-    public Tile[] tile;
+    public Tile[] backgroundTile;
+    public Tile[] oreTile;
     public byte[][] mapTileNumber;
+    public byte[][] oreMapNumber;
     public String currentMap;
 
     // chunks
@@ -24,9 +26,12 @@ public class TileManager {
     public static final int CHUNK_ROWS = 1000 / CHUNK_SIZE;
     public Chunk[][] chunks = new Chunk[CHUNK_COLS][CHUNK_ROWS];
 
+    boolean[][] hasOre = new boolean[CHUNK_SIZE * CHUNK_COLS][CHUNK_SIZE * CHUNK_ROWS];
+
     public TileManager(GamePanel gp) {
         this.gp = gp;
-        tile = new Tile[25];
+        backgroundTile = new Tile[25];
+        oreTile = new Tile[25];
         mapTileNumber = new byte[gp.maxWorldCol][gp.maxWorldRow];
 
         getTileImage();
@@ -34,17 +39,27 @@ public class TileManager {
     }
 
     public void getTileImage() {
-        tile[10] = new Tile(); // unasigned
-        tile[10].image = loadImage("/tiles/unasigned.png");
 
-        tile[0] = new Tile(); // grass
-        tile[0].image = loadImage("/tiles/grass.png");
+        //Background
+        backgroundTile[10] = new Tile(); // unasigned
+        backgroundTile[10].image = loadImage("/tiles/unasigned.png");
 
-        tile[1] = new Tile(); // sand
-        tile[1].image = loadImage("/tiles/sand.png");
+        backgroundTile[0] = new Tile(); // grass
+        backgroundTile[0].image = loadImage("/tiles/grass.png");
 
-        tile[2] = new Tile(); // snow
-        tile[2].image = loadImage("/tiles/snow.png");
+        backgroundTile[1] = new Tile(); // sand
+        backgroundTile[1].image = loadImage("/tiles/sand.png");
+
+        backgroundTile[2] = new Tile(); // snow
+        backgroundTile[2].image = loadImage("/tiles/snow.png");
+
+        //Ore
+        oreTile[1] = new Tile(); // iron
+        oreTile[1].image = loadImage("/tiles/ironOre.png");
+
+        oreTile[2] = new Tile(); // copper
+        oreTile[2].image = loadImage("/tiles/copperOre.png");
+
     }
 
     public void createMap() {
@@ -52,15 +67,22 @@ public class TileManager {
     final int MAP_HEIGHT = CHUNK_SIZE * CHUNK_ROWS;
     final int BIOME_SIZE = 1000;
     final int BIOME_TYPE_COUNT = 3; // 0 = grass, 1 = sand 2 = snow
+    final int ORE_TYPE_COUNT = 2; // 1 = iron, 2 = copper
     final int TOTAL_TILES = MAP_WIDTH * MAP_HEIGHT;
     final int MAX_BIOMES = TOTAL_TILES / BIOME_SIZE;
+    final int MIN_ORE_PATCH = 20;
+    final int MAX_ORE_PATCH = 120;
+    final int MAX_ORE_PATCHES = MAP_HEIGHT * MAP_WIDTH / 4000; 
 
     byte[][] map = new byte[MAP_WIDTH][MAP_HEIGHT];
     boolean[][] filled = new boolean[MAP_WIDTH][MAP_HEIGHT];
+    byte[][] oreMap = new byte[MAP_WIDTH][MAP_HEIGHT];
+    
 
     // fill with unassigned
     for (int x = 0; x < MAP_WIDTH; x++) {
         Arrays.fill(map[x], (byte) 10);
+        
     }
 
     Random rand = new Random();
@@ -74,7 +96,7 @@ public class TileManager {
             startY = rand.nextInt(MAP_HEIGHT);
         } while (filled[startX][startY]);
 
-        byte biomeType = (byte) (createdBiomes % BIOME_TYPE_COUNT);
+        byte biomeType =  (byte) ((createdBiomes % BIOME_TYPE_COUNT));
         Queue<Point> queue = new LinkedList<>();
         queue.add(new Point(startX, startY));
 
@@ -106,6 +128,9 @@ public class TileManager {
         createdBiomes++;
     }
 
+    
+
+
     // fill remaining unassigned with nearby biome
     for (int x = 0; x < MAP_WIDTH; x++) {
         for (int y = 0; y < MAP_HEIGHT; y++) {
@@ -125,8 +150,52 @@ public class TileManager {
         }
     }
 
-    
     this.mapTileNumber = map;
+    
+    //make Ore patches
+    int orePatches = 0;
+    while (orePatches < MAX_ORE_PATCHES) {
+
+        int startX, startY;
+        do {
+            startX = rand.nextInt(MAP_WIDTH);
+            startY = rand.nextInt(MAP_HEIGHT);
+        } while (hasOre[startX][startY]);
+
+        byte oreType = (byte) ((byte) (orePatches % ORE_TYPE_COUNT) + 1);
+        Queue<Point> queue = new LinkedList<>();
+        queue.add(new Point(startX, startY));
+        int count = 0;
+        int patchSize = rand.nextInt(MIN_ORE_PATCH, MAX_ORE_PATCH);
+
+        while (!queue.isEmpty() && count < patchSize) {
+            Point point = queue.poll();
+            int x = point.x;
+            int y = point.y;
+
+            if (x < 0 || y < 0 || x >= MAP_WIDTH || y >= MAP_HEIGHT || hasOre[x][y]) continue;
+
+            oreMap[x][y] = oreType;
+            hasOre[x][y] = true;
+            count++;
+            
+
+            // shuffles neighbors for random spread
+            List<Point> neighbors = Arrays.asList(
+                new Point(x + 1, y),
+                new Point(x - 1, y),
+                new Point(x, y + 1),
+                new Point(x, y - 1)
+            );
+            Collections.shuffle(neighbors, rand);
+            queue.addAll(neighbors);
+            
+        }
+
+        orePatches++;
+    }
+    this.oreMapNumber = oreMap;
+
 
     // Create chunks
     for (int chunkX = 0; chunkX < CHUNK_COLS; chunkX++) {
@@ -141,6 +210,7 @@ public class TileManager {
                     int mapY = worldY + ty;
                     if (mapX < MAP_WIDTH && mapY < MAP_HEIGHT) {
                         chunks[chunkX][chunkY].tileIDs[tx][ty] = map[mapX][mapY];
+                        chunks[chunkX][chunkY].oreIDs[tx][ty] = oreMap[mapX][mapY];
                     }
                 }
             }
@@ -183,7 +253,13 @@ public class TileManager {
 
                         if ( worldX + gp.tileSize > gp.player.cameraX && worldX < gp.player.cameraX + gp.screenWidth && worldY + gp.tileSize > gp.player.cameraY && worldY < gp.player.cameraY + gp.screenHeight) {
                             int tileNum = chunk.tileIDs[tx][ty];
-                            g2.drawImage(tile[tileNum].image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+                            int oreNum = chunk.oreIDs[tx][ty];
+                            int worldTileX = cx * CHUNK_SIZE + tx;
+                            int worldTileY = cy * CHUNK_SIZE + ty;
+                            g2.drawImage(backgroundTile[tileNum].image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+                            if (hasOre[worldTileX][worldTileY] && oreNum != 0) {
+                                g2.drawImage(oreTile[oreNum].image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+                            }
                         }
                     }
                 }
