@@ -42,7 +42,7 @@ public class Player extends Entity {
         worldY = 200 * gamePanel.tileSize;
         width = 1;
         height = 1;
-        speed = 2 * gamePanel.scale;
+        speed = 10 * gamePanel.scale;
         currentImage = down1;
         health = 100;
         maxHealth = 100;
