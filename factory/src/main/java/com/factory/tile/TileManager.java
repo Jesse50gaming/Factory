@@ -20,13 +20,13 @@ public class TileManager {
 
     // chunks
     public static final int CHUNK_SIZE = 50;
-    public static final int CHUNK_COLS = 1000 / CHUNK_SIZE;
+    public static final int CHUNK_COLS = 1000 / CHUNK_SIZE;//up to 10000
     public static final int CHUNK_ROWS = 1000 / CHUNK_SIZE;
     public Chunk[][] chunks = new Chunk[CHUNK_COLS][CHUNK_ROWS];
 
     public TileManager(GamePanel gp) {
         this.gp = gp;
-        tile = new Tile[10];
+        tile = new Tile[25];
         mapTileNumber = new byte[gp.maxWorldCol][gp.maxWorldRow];
 
         getTileImage();
@@ -34,21 +34,24 @@ public class TileManager {
     }
 
     public void getTileImage() {
-        tile[0] = new Tile(); // Grass
+        tile[10] = new Tile(); // unasigned
+        tile[10].image = loadImage("/tiles/unasigned.png");
+
+        tile[0] = new Tile(); // grass
         tile[0].image = loadImage("/tiles/grass.png");
 
-        tile[1] = new Tile(); // Sand
+        tile[1] = new Tile(); // sand
         tile[1].image = loadImage("/tiles/sand.png");
 
-        tile[2] = new Tile(); // Unassigned
-        tile[2].image = loadImage("/tiles/unasigned.png");
+        tile[2] = new Tile(); // snow
+        tile[2].image = loadImage("/tiles/snow.png");
     }
 
     public void createMap() {
     final int MAP_WIDTH = CHUNK_SIZE * CHUNK_COLS;
     final int MAP_HEIGHT = CHUNK_SIZE * CHUNK_ROWS;
     final int BIOME_SIZE = 1000;
-    final int BIOME_TYPE_COUNT = 2; // 0 = grass, 1 = sand
+    final int BIOME_TYPE_COUNT = 3; // 0 = grass, 1 = sand 2 = snow
     final int TOTAL_TILES = MAP_WIDTH * MAP_HEIGHT;
     final int MAX_BIOMES = TOTAL_TILES / BIOME_SIZE;
 
@@ -57,7 +60,7 @@ public class TileManager {
 
     // fill with unassigned
     for (int x = 0; x < MAP_WIDTH; x++) {
-        Arrays.fill(map[x], (byte) 2);
+        Arrays.fill(map[x], (byte) 10);
     }
 
     Random rand = new Random();
@@ -78,8 +81,9 @@ public class TileManager {
         int count = 0;
 
         while (!queue.isEmpty() && count < BIOME_SIZE) {
-            Point p = queue.poll();
-            int x = p.x, y = p.y;
+            Point point = queue.poll();
+            int x = point.x;
+            int y = point.y;
 
             if (x < 0 || y < 0 || x >= MAP_WIDTH || y >= MAP_HEIGHT || filled[x][y]) continue;
 
@@ -177,12 +181,7 @@ public class TileManager {
                         int screenX = worldX - gp.player.cameraX;
                         int screenY = worldY - gp.player.cameraY;
 
-                        if (
-                            worldX + gp.tileSize > gp.player.cameraX &&
-                            worldX < gp.player.cameraX + gp.screenWidth &&
-                            worldY + gp.tileSize > gp.player.cameraY &&
-                            worldY < gp.player.cameraY + gp.screenHeight
-                        ) {
+                        if ( worldX + gp.tileSize > gp.player.cameraX && worldX < gp.player.cameraX + gp.screenWidth && worldY + gp.tileSize > gp.player.cameraY && worldY < gp.player.cameraY + gp.screenHeight) {
                             int tileNum = chunk.tileIDs[tx][ty];
                             g2.drawImage(tile[tileNum].image, screenX, screenY, gp.tileSize, gp.tileSize, null);
                         }
