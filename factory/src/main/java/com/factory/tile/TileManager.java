@@ -63,174 +63,219 @@ public class TileManager {
     }
 
     public void createMap() {
-    final int MAP_WIDTH = CHUNK_SIZE * CHUNK_COLS;
-    final int MAP_HEIGHT = CHUNK_SIZE * CHUNK_ROWS;
-    final int BIOME_SIZE = 1000;
-    final int BIOME_TYPE_COUNT = 3; // 0 = grass, 1 = sand 2 = snow
-    final int ORE_TYPE_COUNT = 2; // 1 = iron, 2 = copper
-    final int TOTAL_TILES = MAP_WIDTH * MAP_HEIGHT;
-    final int MAX_BIOMES = TOTAL_TILES / BIOME_SIZE;
-    final int MIN_ORE_PATCH = 20;
-    final int MAX_ORE_PATCH = 120;
-    final int MAX_ORE_PATCHES = MAP_HEIGHT * MAP_WIDTH / 4000; 
+        final int MAP_WIDTH = CHUNK_SIZE * CHUNK_COLS;
+        final int MAP_HEIGHT = CHUNK_SIZE * CHUNK_ROWS;
+        final int BIOME_SIZE = 1000;
+        final int BIOME_TYPE_COUNT = 3; // 0 = grass, 1 = sand 2 = snow
+        final int ORE_TYPE_COUNT = 2; // 1 = iron, 2 = copper
+        final int TOTAL_TILES = MAP_WIDTH * MAP_HEIGHT;
+        final int MAX_BIOMES = TOTAL_TILES / BIOME_SIZE;
+        final int MIN_ORE_PATCH = 20;
+        final int MAX_ORE_PATCH = 120;
+        final int MAX_ORE_PATCHES = MAP_HEIGHT * MAP_WIDTH / 4000; 
 
-    byte[][] map = new byte[MAP_WIDTH][MAP_HEIGHT];
-    boolean[][] filled = new boolean[MAP_WIDTH][MAP_HEIGHT];
-    byte[][] oreMap = new byte[MAP_WIDTH][MAP_HEIGHT];
-    
-
-    // fill with unassigned
-    for (int x = 0; x < MAP_WIDTH; x++) {
-        Arrays.fill(map[x], (byte) 10);
+        byte[][] map = new byte[MAP_WIDTH][MAP_HEIGHT];
+        boolean[][] filled = new boolean[MAP_WIDTH][MAP_HEIGHT];
+        byte[][] oreMap = new byte[MAP_WIDTH][MAP_HEIGHT];
         
-    }
 
-    Random rand = new Random();
-    int createdBiomes = 0;
-    int unassignedCount = TOTAL_TILES;
-
-    while (createdBiomes < MAX_BIOMES && unassignedCount > 0) {
-        int startX, startY;
-        do {
-            startX = rand.nextInt(MAP_WIDTH);
-            startY = rand.nextInt(MAP_HEIGHT);
-        } while (filled[startX][startY]);
-
-        byte biomeType =  (byte) ((createdBiomes % BIOME_TYPE_COUNT));
-        Queue<Point> queue = new LinkedList<>();
-        queue.add(new Point(startX, startY));
-
-        int count = 0;
-
-        while (!queue.isEmpty() && count < BIOME_SIZE) {
-            Point point = queue.poll();
-            int x = point.x;
-            int y = point.y;
-
-            if (x < 0 || y < 0 || x >= MAP_WIDTH || y >= MAP_HEIGHT || filled[x][y]) continue;
-
-            map[x][y] = biomeType;
-            filled[x][y] = true;
-            count++;
-            unassignedCount--;
-
-            // shuffles neighbors for random spread
-            List<Point> neighbors = Arrays.asList(
-                new Point(x + 1, y),
-                new Point(x - 1, y),
-                new Point(x, y + 1),
-                new Point(x, y - 1)
-            );
-            Collections.shuffle(neighbors, rand);
-            queue.addAll(neighbors);
+        // fill with unassigned
+        for (int x = 0; x < MAP_WIDTH; x++) {
+            Arrays.fill(map[x], (byte) 10);
+            
         }
 
-        createdBiomes++;
-    }
+        Random rand = new Random();
+        int createdBiomes = 0;
+        int unassignedCount = TOTAL_TILES;
 
-    
+        while (createdBiomes < MAX_BIOMES && unassignedCount > 0) {
+            int startX, startY;
+            do {
+                startX = rand.nextInt(MAP_WIDTH);
+                startY = rand.nextInt(MAP_HEIGHT);
+            } while (filled[startX][startY]);
 
+            byte biomeType =  (byte) ((createdBiomes % BIOME_TYPE_COUNT));
+            Queue<Point> queue = new LinkedList<>();
+            queue.add(new Point(startX, startY));
 
-    // fill remaining unassigned with nearby biome
-    for (int x = 0; x < MAP_WIDTH; x++) {
-        for (int y = 0; y < MAP_HEIGHT; y++) {
-            if (!filled[x][y]) {
-                for (int dx = -1; dx <= 1; dx++) {
-                    for (int dy = -1; dy <= 1; dy++) {
-                        int nx = x + dx, ny = y + dy;
-                        if (nx >= 0 && ny >= 0 && nx < MAP_WIDTH && ny < MAP_HEIGHT && filled[nx][ny]) {
-                            map[x][y] = map[nx][ny];
+            int count = 0;
+
+            while (!queue.isEmpty() && count < BIOME_SIZE) {
+                Point point = queue.poll();
+                int x = point.x;
+                int y = point.y;
+
+                if (x < 0 || y < 0 || x >= MAP_WIDTH || y >= MAP_HEIGHT || filled[x][y]) continue;
+
+                map[x][y] = biomeType;
+                filled[x][y] = true;
+                count++;
+                unassignedCount--;
+
+                
+
+                // shuffles neighbors for random spread
+                List<Point> neighbors = new LinkedList<Point>(); 
+
+                if (rand.nextBoolean()) {
+                    neighbors.add(new Point(x + 1, y));
+                }
+                if (rand.nextBoolean()) {
+                    neighbors.add(new Point(x - 1, y));
+                }
+                if (rand.nextBoolean()) {
+                    neighbors.add(new Point(x, y + 1));
+                }
+                if (rand.nextBoolean()) {
+                    neighbors.add(new Point(x, y - 1));
+                }
+
+                Collections.shuffle(neighbors, rand);
+                queue.addAll(neighbors);
+            }
+
+            createdBiomes++;
+        }
+
+        
+
+         
+        // fill remaining unassigned with majority neighbor biome
+        boolean changed;
+        do {
+            changed = false;
+            for (int x = 0; x < MAP_WIDTH; x++) {
+                for (int y = 0; y < MAP_HEIGHT; y++) {
+                    if (!filled[x][y]) {
+                        Map<Byte, Integer> biomeCount = new HashMap<>();
+
+                        for (int dx = -1; dx <= 1; dx++) { // goes through surrounding x
+                            for (int dy = -1; dy <= 1; dy++) { // goes through surrounding y
+                                if (dx == 0 && dy == 0) continue;
+
+                                int neighborX = x + dx, neigborY = y + dy;
+                                if (neighborX >= 0 && neigborY >= 0 && neighborX < MAP_WIDTH && neigborY < MAP_HEIGHT && filled[neighborX][neigborY]) {
+                                    byte neighborBiome = map[neighborX][neigborY];
+                                    biomeCount.put(neighborBiome, biomeCount.getOrDefault(neighborBiome, 0) + 1);
+                                }
+                            }
+                        }
+
+                        if (!biomeCount.isEmpty()) {
+                            // find most frequent biome
+                            int max = Collections.max(biomeCount.values());
+
+                            // collect all with max count to break ties randomly
+                            List<Byte> candidates = new ArrayList<>();
+                            for (Map.Entry<Byte, Integer> entry : biomeCount.entrySet()) {
+                                if (entry.getValue() == max) {
+                                    candidates.add(entry.getKey());
+                                }
+                            }
+
+                            byte chosenBiome = candidates.get(new Random().nextInt(candidates.size()));
+
+                            map[x][y] = chosenBiome;
                             filled[x][y] = true;
-                            break;
+                            changed = true;
                         }
                     }
-                    if (filled[x][y]) break;
                 }
             }
+        } while (changed);
+        
+
+        this.mapTileNumber = map;
+        
+        //make Ore patches
+        int orePatches = 0;
+        while (orePatches < MAX_ORE_PATCHES) {
+
+            int startX, startY;
+            do {
+                startX = rand.nextInt(MAP_WIDTH);
+                startY = rand.nextInt(MAP_HEIGHT);
+            } while (hasOre[startX][startY]);
+
+            byte oreType = (byte) ((byte) (orePatches % ORE_TYPE_COUNT) + 1);
+            Queue<Point> queue = new LinkedList<>();
+            queue.add(new Point(startX, startY));
+            int count = 0;
+            int patchSize = rand.nextInt(MIN_ORE_PATCH, MAX_ORE_PATCH);
+
+            while (!queue.isEmpty() && count < patchSize) {
+                Point point = queue.poll();
+                int x = point.x;
+                int y = point.y;
+
+                if (x < 0 || y < 0 || x >= MAP_WIDTH || y >= MAP_HEIGHT || hasOre[x][y]) continue;
+
+                oreMap[x][y] = oreType;
+                hasOre[x][y] = true;
+                count++;
+                
+
+                /// shuffles neighbors for random spread
+                List<Point> neighbors = new LinkedList<Point>(); 
+
+                if (rand.nextBoolean()) {
+                    neighbors.add(new Point(x + 1, y));
+                }
+                if (rand.nextBoolean()) {
+                    neighbors.add(new Point(x - 1, y));
+                }
+                if (rand.nextBoolean()) {
+                    neighbors.add(new Point(x, y + 1));
+                }
+                if (rand.nextBoolean()) {
+                    neighbors.add(new Point(x, y - 1));
+                }
+                Collections.shuffle(neighbors, rand);
+                queue.addAll(neighbors);
+                
+            }
+
+            orePatches++;
         }
-    }
-
-    this.mapTileNumber = map;
-    
-    //make Ore patches
-    int orePatches = 0;
-    while (orePatches < MAX_ORE_PATCHES) {
-
-        int startX, startY;
-        do {
-            startX = rand.nextInt(MAP_WIDTH);
-            startY = rand.nextInt(MAP_HEIGHT);
-        } while (hasOre[startX][startY]);
-
-        byte oreType = (byte) ((byte) (orePatches % ORE_TYPE_COUNT) + 1);
-        Queue<Point> queue = new LinkedList<>();
-        queue.add(new Point(startX, startY));
-        int count = 0;
-        int patchSize = rand.nextInt(MIN_ORE_PATCH, MAX_ORE_PATCH);
-
-        while (!queue.isEmpty() && count < patchSize) {
-            Point point = queue.poll();
-            int x = point.x;
-            int y = point.y;
-
-            if (x < 0 || y < 0 || x >= MAP_WIDTH || y >= MAP_HEIGHT || hasOre[x][y]) continue;
-
-            oreMap[x][y] = oreType;
-            hasOre[x][y] = true;
-            count++;
-            
-
-            // shuffles neighbors for random spread
-            List<Point> neighbors = Arrays.asList(
-                new Point(x + 1, y),
-                new Point(x - 1, y),
-                new Point(x, y + 1),
-                new Point(x, y - 1)
-            );
-            Collections.shuffle(neighbors, rand);
-            queue.addAll(neighbors);
-            
-        }
-
-        orePatches++;
-    }
-    this.oreMapNumber = oreMap;
+        this.oreMapNumber = oreMap;
 
 
-    // Create chunks
-    for (int chunkX = 0; chunkX < CHUNK_COLS; chunkX++) {
-        for (int chunkY = 0; chunkY < CHUNK_ROWS; chunkY++) {
-            chunks[chunkX][chunkY] = new Chunk(chunkX, chunkY);
-            int worldX = chunkX * CHUNK_SIZE;
-            int worldY = chunkY * CHUNK_SIZE;
+        // Create chunks
+        for (int chunkX = 0; chunkX < CHUNK_COLS; chunkX++) {
+            for (int chunkY = 0; chunkY < CHUNK_ROWS; chunkY++) {
+                chunks[chunkX][chunkY] = new Chunk(chunkX, chunkY);
+                int worldX = chunkX * CHUNK_SIZE;
+                int worldY = chunkY * CHUNK_SIZE;
 
-            for (int tx = 0; tx < CHUNK_SIZE; tx++) {
-                for (int ty = 0; ty < CHUNK_SIZE; ty++) {
-                    int mapX = worldX + tx;
-                    int mapY = worldY + ty;
-                    if (mapX < MAP_WIDTH && mapY < MAP_HEIGHT) {
-                        chunks[chunkX][chunkY].tileIDs[tx][ty] = map[mapX][mapY];
-                        chunks[chunkX][chunkY].oreIDs[tx][ty] = oreMap[mapX][mapY];
+                for (int tx = 0; tx < CHUNK_SIZE; tx++) {
+                    for (int ty = 0; ty < CHUNK_SIZE; ty++) {
+                        int mapX = worldX + tx;
+                        int mapY = worldY + ty;
+                        if (mapX < MAP_WIDTH && mapY < MAP_HEIGHT) {
+                            chunks[chunkX][chunkY].tileIDs[tx][ty] = map[mapX][mapY];
+                            chunks[chunkX][chunkY].oreIDs[tx][ty] = oreMap[mapX][mapY];
+                        }
                     }
                 }
             }
         }
-    }
 
-    /* tile counter
-    int grass = 0, sand = 0;
-    for (int x = 0; x < MAP_WIDTH; x++) {
-        for (int y = 0; y < MAP_HEIGHT; y++) {
-            if (map[x][y] == 0) grass++;
-            else if (map[x][y] == 1) sand++;
+        /* tile counter
+        int grass = 0, sand = 0;
+        for (int x = 0; x < MAP_WIDTH; x++) {
+            for (int y = 0; y < MAP_HEIGHT; y++) {
+                if (map[x][y] == 0) grass++;
+                else if (map[x][y] == 1) sand++;
+            }
         }
+        
+        System.out.println("Final biome tile counts:");
+        System.out.println("Grass tiles: " + grass);
+        System.out.println("Sand tiles: " + sand);
+        */
     }
-     
-    System.out.println("Final biome tile counts:");
-    System.out.println("Grass tiles: " + grass);
-    System.out.println("Sand tiles: " + sand);
-    */
-}
 
     
 
