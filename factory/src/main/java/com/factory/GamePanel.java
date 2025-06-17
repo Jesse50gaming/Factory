@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 
 import com.factory.Handlers.CollisionChecker;
 import com.factory.Handlers.KeyHandler;
+import com.factory.Handlers.MouseHandler;
 import com.factory.tile.TileManager;
 
 public class GamePanel extends JPanel implements Runnable {
@@ -42,15 +43,17 @@ public class GamePanel extends JPanel implements Runnable {
     //Other
     Thread gameThread;
     public KeyHandler keyHandler = new KeyHandler();
+    public MouseHandler mouseHandler = new MouseHandler(this);
     
     //Player
-    public Player player = new Player(this, keyHandler);
+    public Player player = new Player(this, keyHandler, mouseHandler);
     
 
     //Other
     
     public TileManager tileManager = new TileManager(this);
     CollisionChecker collisionChecker = new CollisionChecker(this);
+    
     
 
     public GamePanel() {
@@ -61,6 +64,8 @@ public class GamePanel extends JPanel implements Runnable {
         this.setFocusable(true);
         this.requestFocusInWindow();
         this.addKeyListener(keyHandler);
+        this.addMouseListener(mouseHandler);
+        
 
     }
 
@@ -105,7 +110,8 @@ public class GamePanel extends JPanel implements Runnable {
 
     private void update() {
         player.move();
-
+        mouseHandler.updateMouse();
+        
     }
 
     public void startGameThread() {
