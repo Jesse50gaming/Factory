@@ -5,7 +5,8 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
-import com.factory.Handlers.KeyHandler; 
+import com.factory.Handlers.KeyHandler;
+import com.factory.Handlers.MouseHandler; 
 
 public class Player extends Entity {
 
@@ -21,6 +22,7 @@ public class Player extends Entity {
     public int cameraX, cameraY;
     GamePanel gamePanel;
     KeyHandler keyHandler;
+    MouseHandler mouseHandler;
 
     int cooldown = 0;
 
@@ -29,10 +31,10 @@ public class Player extends Entity {
     
     
 
-    public Player(GamePanel gamePanel, KeyHandler keyHandler) {
+    public Player(GamePanel gamePanel, KeyHandler keyHandler, MouseHandler mouseHandler) {
         this.gamePanel = gamePanel;
         this.keyHandler = keyHandler;
-
+        this.mouseHandler = mouseHandler;
         loadPlayerImages();
         setDefaultValues();
     }
