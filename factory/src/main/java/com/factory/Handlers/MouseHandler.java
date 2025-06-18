@@ -49,14 +49,18 @@ public class MouseHandler implements MouseListener  {
     public void mouseExited(MouseEvent e) {}
 
     public void updateMouse() {
-        Point mousePoint = MouseInfo.getPointerInfo().getLocation();
-        Point windowLocation = gamePanel.getLocationOnScreen();
+        
+        if(gamePanel.isShowing()) {
 
-        mouseScreenX = mousePoint.x - windowLocation.x;
-        mouseScreenY = mousePoint.y - windowLocation.y;
+            Point mousePoint = MouseInfo.getPointerInfo().getLocation();
+            Point windowLocation = gamePanel.getLocationOnScreen();
 
-        mouseWorldX = mouseScreenX + gamePanel.player.cameraX;
-        mouseWorldY = mouseScreenY + gamePanel.player.cameraY;
+            mouseScreenX = mousePoint.x - windowLocation.x;
+            mouseScreenY = mousePoint.y - windowLocation.y;
+
+            mouseWorldX = mouseScreenX + gamePanel.player.cameraX;
+            mouseWorldY = mouseScreenY + gamePanel.player.cameraY;
+        }
 
     }
     

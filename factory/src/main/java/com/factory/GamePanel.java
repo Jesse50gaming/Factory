@@ -109,7 +109,7 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     private void update() {
-        player.move();
+        player.update();
         mouseHandler.updateMouse();
         
     }
