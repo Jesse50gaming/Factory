@@ -14,6 +14,7 @@ public class Player extends Entity {
 
     
     public BufferedImage currentImage;
+    public ItemContainer inventory;
 
     int spriteCounter = 0;
     int spriteNum = 1;
@@ -49,9 +50,22 @@ public class Player extends Entity {
         health = 100;
         maxHealth = 100;
         damage = 10;
+        inventory = new ItemContainer(gamePanel, 10);
 
         
         updateHitBox();
+    }
+
+    public void update() {
+        inventory.update();
+        move();
+        keyBinds();
+    }
+
+    public void keyBinds() {
+        if (keyHandler.bPressed) {
+            inventory.toggle();
+        }  
     }
 
     private void loadPlayerImages() {
@@ -73,6 +87,7 @@ public class Player extends Entity {
         int drawX = worldX - cameraX;
         int drawY = worldY - cameraY;
         g2.drawImage(currentImage, drawX, drawY, width * (int) (gamePanel.tileSize * scale), height * (int) (gamePanel.tileSize * scale), null);
+        inventory.draw(g2);
     }
 
     public void move() {
