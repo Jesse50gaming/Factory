@@ -14,6 +14,7 @@ public class ItemContainer {
     int screenX, screenY;
     boolean open;
     int closeTimer;
+    int pixelWidth;
 
 
     public ItemContainer(GamePanel gamePanel, int height) {
@@ -26,6 +27,7 @@ public class ItemContainer {
         width = 8;
         screenX = 100;
         screenY = 100;
+        pixelWidth = 138 * gamePanel.scale;
         open = false;
         items = new Item[width][height];
         try {
@@ -45,12 +47,12 @@ public class ItemContainer {
         g2.drawImage(topImage, screenX, screenY,topImage.getWidth() * gamePanel.scale ,topImage.getHeight() * gamePanel.scale, null);
 
         // middle
-        for (int i = 1; i < height - 1; i++) {
-            g2.drawImage(middleImage, screenX, screenY + i * middleImage.getHeight() * gamePanel.scale,middleImage.getWidth() * gamePanel.scale ,middleImage.getHeight() * gamePanel.scale, null);
+        for (int i = 1; i < height; i++) {
+            g2.drawImage(middleImage, screenX, screenY + 12 * gamePanel.scale + (i - 1) * middleImage.getHeight() * gamePanel.scale,middleImage.getWidth() * gamePanel.scale ,middleImage.getHeight() * gamePanel.scale, null);
         }
 
         // bottom
-        g2.drawImage(bottomImage, screenX, screenY + (height - 1) * middleImage.getHeight() * gamePanel.scale ,bottomImage.getWidth() * gamePanel.scale ,bottomImage.getHeight() * gamePanel.scale, null);
+        g2.drawImage(bottomImage, screenX, screenY + 12 * gamePanel.scale + (height - 1) * middleImage.getHeight() * gamePanel.scale ,bottomImage.getWidth() * gamePanel.scale ,bottomImage.getHeight() * gamePanel.scale, null);
     }
 
     public void toggle() {
@@ -68,6 +70,25 @@ public class ItemContainer {
         if (closeTimer > 0) {
             closeTimer--;
         }
+
+        if (open && gamePanel.mouseHandler.touchingMouse(screenX,screenY,pixelWidth,12 * gamePanel.scale) && gamePanel.mouseHandler.leftDown) {
+            drag();
+        }
+    }
+
+    int mouseStartX,mouseStartY;
+    public void drag() {
+        if (!gamePanel.mouseHandler.dragging) {
+            mouseStartX = gamePanel.mouseHandler.mouseScreenX;
+            mouseStartY = gamePanel.mouseHandler.mouseScreenY;
+        }
+        gamePanel.mouseHandler.dragging = true;
+
+        screenX += gamePanel.mouseHandler.mouseScreenX - mouseStartX;
+        screenY += gamePanel.mouseHandler.mouseScreenY - mouseStartY;
+
+        mouseStartX = gamePanel.mouseHandler.mouseScreenX;
+        mouseStartY = gamePanel.mouseHandler.mouseScreenY;
     }
 
 
