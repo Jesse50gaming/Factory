@@ -11,10 +11,10 @@ public class IronOre extends Item {
     public IronOre(GamePanel gamePanel, int x, int y, int numberOfItems) {
         super(gamePanel, x, y, numberOfItems);
         setDefaults();
-        
+        setIndividualDefaults();
     }
 
-    public void setDefaults() {
+    public void setIndividualDefaults() {
         try {
             image = ImageIO.read(getClass().getResourceAsStream("/items/ironOre.png"));
         } catch (IOException e) {

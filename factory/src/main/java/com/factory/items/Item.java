@@ -10,7 +10,7 @@ public class Item {
     public BufferedImage image;
 
     int x,y;
-    int stackSize;
+    public int stackSize;
     int maxStackSize;
     boolean inContainer = true;
     public int containerHeight;
@@ -23,12 +23,11 @@ public class Item {
         this.x = x;
         this.y = y;
         this.stackSize = numberOfItems;
-        setDefaults();
     }
 
     public void setDefaults() {
-        containerHeight = 16 * gamePanel.scale;
-        containerWidth = 16 * gamePanel.scale;
+        containerHeight = 16;
+        containerWidth = 16;
         groundHeight = gamePanel.tileSize / 4;
         groundWidth = gamePanel.tileSize / 4;
     }

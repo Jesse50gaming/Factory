@@ -1,5 +1,7 @@
 package com.factory;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -60,12 +62,19 @@ public class ItemContainer {
 
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                if(items[x][y] == null) {
-                    continue;
+                if (items[x][y] == null) continue;
+
+                if (items[x][y].image == null) {
+                    System.out.println("Image is null at (" + x + "," + y + ")");
+                } else {
+
+                    g2.drawImage(items[x][y].image,screenX + gamePanel.scale + (17 * x) * gamePanel.scale,screenY + 13 * gamePanel.scale + (17 * y) * gamePanel.scale,items[x][y].containerWidth * gamePanel.scale,items[x][y].containerHeight * gamePanel.scale,null);
+
+                    Font font = new Font("TIMES NEW ROMAN", 1, 10 * gamePanel.scale);
+                    g2.setFont(font);
+                    g2.setColor(Color.WHITE);
+                    g2.drawString(String.valueOf(items[x][y].stackSize),screenX + gamePanel.scale + (17 * x) * gamePanel.scale,screenY + 13 * gamePanel.scale + (17 * y) * gamePanel.scale + items[x][y].containerHeight * gamePanel.scale - 4);
                 }
-                
-                g2.drawImage(items[x][y].image,screenX + (17 * x) * gamePanel.scale, screenY + (17 * y)* gamePanel.scale, items[x][y].containerWidth * gamePanel.scale, items[x][y].containerHeight * gamePanel.scale, null);
-                
             }
         }
     }
