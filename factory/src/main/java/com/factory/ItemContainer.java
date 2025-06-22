@@ -6,6 +6,8 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import com.factory.items.Item;
+
 public class ItemContainer {
     GamePanel gamePanel;
     int height,width;
@@ -53,6 +55,33 @@ public class ItemContainer {
 
         // bottom
         g2.drawImage(bottomImage, screenX, screenY + 12 * gamePanel.scale + (height - 1) * middleImage.getHeight() * gamePanel.scale ,bottomImage.getWidth() * gamePanel.scale ,bottomImage.getHeight() * gamePanel.scale, null);
+
+        //items 
+
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                if(items[x][y] == null) {
+                    continue;
+                }
+                
+                g2.drawImage(items[x][y].image,screenX + (17 * x) * gamePanel.scale, screenY + (17 * y)* gamePanel.scale, items[x][y].containerWidth * gamePanel.scale, items[x][y].containerHeight * gamePanel.scale, null);
+                
+            }
+        }
+    }
+
+    public void add(Item item) {
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                if(items[x][y] != null) {
+                    continue;
+                }
+                items[x][y] = item;
+                
+                return;
+                
+            }
+        }
     }
 
     public void toggle() {
