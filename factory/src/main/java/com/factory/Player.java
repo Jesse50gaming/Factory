@@ -6,7 +6,8 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import com.factory.Handlers.KeyHandler;
-import com.factory.Handlers.MouseHandler; 
+import com.factory.Handlers.MouseHandler;
+import com.factory.items.IronOre; 
 
 public class Player extends Entity {
 
@@ -51,6 +52,10 @@ public class Player extends Entity {
         maxHealth = 100;
         damage = 10;
         inventory = new ItemContainer(gamePanel, 10);
+
+        IronOre ironOre = new IronOre(gamePanel, worldX, worldY, 1);
+
+        inventory.add(ironOre);
 
         
         updateHitBox();
