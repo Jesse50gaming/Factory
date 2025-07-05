@@ -19,6 +19,7 @@ public class ItemContainer {
     boolean open;
     int closeTimer;
     int pixelWidth;
+    int grabCooldown = 30;
 
 
     public ItemContainer(GamePanel gamePanel, int height) {
@@ -80,17 +81,27 @@ public class ItemContainer {
     }
 
     public void add(Item item) {
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
+        if(item == null) {
+            return;
+        }
+        
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
                 if(items[x][y] != null) {
                     continue;
                 }
                 items[x][y] = item;
-                
+                items[x][y].containerX = x;
+                items[x][y].containerY = y;
                 return;
                 
             }
         }
+    }
+
+    public void remove(Item item) {
+        items[item.containerX][item.containerY] = null;
+        updateItems();
     }
 
     public void toggle() {
@@ -104,7 +115,34 @@ public class ItemContainer {
         closeTimer = 30;
     }
 
+    public void updateItems() {
+        int count = 0;
+        Item[] itemsList = new Item[height * width];
+        //makes list of all items in order
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                itemsList[count] = items[x][y];
+                count++;
+            }  
+        }
+        //sets all slots to null
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                items[x][y] = null;
+
+            }  
+        }
+        //adds all items back
+        for (int x = 0; x < itemsList.length; x++) {
+            add(itemsList[x]);
+        }
+
+    }
+
     public void update() {
+        if (grabCooldown > 0) {
+            grabCooldown--;
+        }
         if (closeTimer > 0) {
             closeTimer--;
         }
@@ -112,6 +150,36 @@ public class ItemContainer {
         if (open && gamePanel.mouseHandler.touchingMouse(screenX,screenY,pixelWidth,12 * gamePanel.scale) && gamePanel.mouseHandler.leftDown) {
             drag();
         }
+
+        if (open && gamePanel.mouseHandler.touchingMouse(screenX,screenY + 12 * gamePanel.scale,pixelWidth,height * 17 * gamePanel.scale) && gamePanel.mouseHandler.leftDown && grabCooldown == 0) {
+            
+
+            if (gamePanel.mouseHandler.itemInHand == false && findItem() != null && grabCooldown == 0) {
+                gamePanel.mouseHandler.pickUpItem(findItem(), this);
+                grabCooldown = 30;
+            }
+
+            if (gamePanel.mouseHandler.itemInHand == true && grabCooldown == 0) {
+                gamePanel.mouseHandler.dropItem(this);
+                grabCooldown = 30;
+            }
+           
+        }
+
+    }
+
+    private Item findItem() {
+        int mouseX = gamePanel.mouseHandler.mouseScreenX;
+        int mouseY = gamePanel.mouseHandler.mouseScreenY;
+
+        double col = (mouseX - screenX) / 17.0 / gamePanel.scale;
+        double row = (mouseY - screenY - 12 * gamePanel.scale) / 17.0 / gamePanel.scale;
+
+        int colRound = (int) Math.floor(col);
+        int rowRound = (int) Math.floor(row);
+
+        return items[colRound][rowRound];
+
     }
 
     int mouseStartX,mouseStartY;
@@ -127,6 +195,35 @@ public class ItemContainer {
 
         mouseStartX = gamePanel.mouseHandler.mouseScreenX;
         mouseStartY = gamePanel.mouseHandler.mouseScreenY;
+    }
+
+    public Item pickUpStack(String name) {
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                if(items[x][y] == null) continue;
+
+                if (items[x][y].name == name) {
+                    return items[x][y];
+                }
+                
+            }
+        }
+        return null;
+    }
+
+    private int findCol() {
+        int mouseX = gamePanel.mouseHandler.mouseScreenX;
+        double col = (mouseX - screenX) / 17.0 / gamePanel.scale;
+        int colRound = (int) Math.floor(col);
+        return colRound;
+    }
+
+    private int findRow() {
+        int mouseY = gamePanel.mouseHandler.mouseScreenY;
+        double row = (mouseY - screenY) / 17.0 / gamePanel.scale;
+        int rowRound = (int) Math.floor(row);
+        return rowRound;
+
     }
 
 

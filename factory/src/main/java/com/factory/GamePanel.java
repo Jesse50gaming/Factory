@@ -8,7 +8,7 @@ import java.awt.Graphics2D;
 import java.awt.Color;
 
 
-import javax.swing.JPanel;
+import javax.swing.JPanel; 
 
 
 
@@ -21,7 +21,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     //Screen Settings
     static int originalTileSize = 16;
-    public int scale = 4;
+    public int scale = 3;
     final public int tileSize = originalTileSize * scale;
 
     final public int maxScreenCol = 24;
@@ -126,6 +126,8 @@ public class GamePanel extends JPanel implements Runnable {
         tileManager.drawBackground(g2);
 
         player.paint(g2);
+
+        mouseHandler.draw(g2);
         
         g2.dispose();
     }

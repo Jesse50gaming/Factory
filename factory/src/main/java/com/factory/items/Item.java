@@ -14,6 +14,8 @@ public class Item {
     int maxStackSize;
     boolean inContainer = true;
     public int containerHeight;
+    public int containerX,containerY;
+    public String name;
 
     public int containerWidth;
     int groundHeight, groundWidth;

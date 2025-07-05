@@ -7,7 +7,9 @@ import javax.imageio.ImageIO;
 
 import com.factory.Handlers.KeyHandler;
 import com.factory.Handlers.MouseHandler;
-import com.factory.items.IronOre; 
+import com.factory.items.CopperOre;
+import com.factory.items.IronOre;
+
 
 public class Player extends Entity {
 
@@ -16,6 +18,7 @@ public class Player extends Entity {
     
     public BufferedImage currentImage;
     public ItemContainer inventory;
+    public Hotbar hotbar;
 
     int spriteCounter = 0;
     int spriteNum = 1;
@@ -46,16 +49,17 @@ public class Player extends Entity {
         worldY = 200 * gamePanel.tileSize;
         width = 1;
         height = 1;
-        speed = 10 * gamePanel.scale;
-        currentImage = down1;
+        speed = 3 * gamePanel.scale;
+        currentImage = down1; 
         health = 100;
         maxHealth = 100;
         damage = 10;
         inventory = new ItemContainer(gamePanel, 10);
+        hotbar = new Hotbar(gamePanel, 2,this);
+        
 
-        IronOre ironOre = new IronOre(gamePanel, worldX, worldY, 1);
-
-        inventory.add(ironOre);
+        inventory.add(new IronOre(gamePanel, worldX, worldY, 1));
+        inventory.add(new CopperOre(gamePanel, worldX, worldY, 5));
 
         
         updateHitBox();
@@ -63,6 +67,7 @@ public class Player extends Entity {
 
     public void update() {
         inventory.update();
+        hotbar.update();
         move();
         keyBinds();
     }
@@ -93,6 +98,7 @@ public class Player extends Entity {
         int drawY = worldY - cameraY;
         g2.drawImage(currentImage, drawX, drawY, width * (int) (gamePanel.tileSize * scale), height * (int) (gamePanel.tileSize * scale), null);
         inventory.draw(g2);
+        hotbar.draw(g2);
     }
 
     public void move() {

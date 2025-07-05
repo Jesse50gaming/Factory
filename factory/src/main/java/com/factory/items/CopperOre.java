@@ -6,9 +6,9 @@ import javax.imageio.ImageIO;
 
 import com.factory.GamePanel;
 
-public class IronOre extends Item {
+public class CopperOre extends Item {
 
-    public IronOre(GamePanel gamePanel, int x, int y, int numberOfItems) {
+    public CopperOre(GamePanel gamePanel, int x, int y, int numberOfItems) {
         super(gamePanel, x, y, numberOfItems);
         setDefaults();
         setIndividualDefaults();
@@ -16,11 +16,11 @@ public class IronOre extends Item {
 
     public void setIndividualDefaults() {
         try {
-            image = ImageIO.read(getClass().getResourceAsStream("/items/ironOre.png"));
+            image = ImageIO.read(getClass().getResourceAsStream("/items/copperOre.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        name = "Iron Ore";
+        name = "Copper Ore";
 
         maxStackSize = 100;
         
