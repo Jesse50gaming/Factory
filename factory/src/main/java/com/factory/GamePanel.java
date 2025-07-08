@@ -4,7 +4,7 @@ import java.awt.Dimension;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-
+import java.util.ArrayList;
 import java.awt.Color;
 
 
@@ -15,13 +15,17 @@ import javax.swing.JPanel;
 import com.factory.Handlers.CollisionChecker;
 import com.factory.Handlers.KeyHandler;
 import com.factory.Handlers.MouseHandler;
+import com.factory.buildings.Building;
+import com.factory.buildings.IronChest;
 import com.factory.tile.TileManager;
+
+
 
 public class GamePanel extends JPanel implements Runnable {
 
     //Screen Settings
     static int originalTileSize = 16;
-    public int scale = 3;
+    public int scale = 4;
     final public int tileSize = originalTileSize * scale;
 
     final public int maxScreenCol = 24;
@@ -53,6 +57,10 @@ public class GamePanel extends JPanel implements Runnable {
     
     public TileManager tileManager = new TileManager(this);
     CollisionChecker collisionChecker = new CollisionChecker(this);
+
+    //objects
+    public ArrayList<Building> buildings = new ArrayList<>();
+    public IronChest ironChest = new IronChest(this, 201 * tileSize, 201 * tileSize);
     
     
 
@@ -66,8 +74,8 @@ public class GamePanel extends JPanel implements Runnable {
         this.addKeyListener(keyHandler);
         this.addMouseListener(mouseHandler);
         
-
-    }
+        buildings.add(ironChest);
+    }   
 
     
 
@@ -111,12 +119,16 @@ public class GamePanel extends JPanel implements Runnable {
     private void update() {
         player.update();
         mouseHandler.updateMouse();
-        
+        for (Building building: buildings) {
+            building.update();
+        }
     }
 
     public void startGameThread() {
         gameThread = new Thread(this);
         gameThread.start();
+
+        
     }
 
     public void paintComponent(Graphics g) {
@@ -128,6 +140,10 @@ public class GamePanel extends JPanel implements Runnable {
         player.paint(g2);
 
         mouseHandler.draw(g2);
+
+        for (Building building : buildings) {
+            building.paint(g2);
+        }
         
         g2.dispose();
     }

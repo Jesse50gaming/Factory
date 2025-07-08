@@ -1,10 +1,6 @@
 package com.factory.Handlers;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.MouseInfo;
-import java.awt.Point;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -16,7 +12,9 @@ import com.factory.items.Item;
 public class MouseHandler implements MouseListener {
 
     public boolean leftDown = false;
-    public boolean leftClick = false; // Set to true for one frame after a click
+    public boolean leftClick = false;
+    public boolean rightDown = false;
+    public boolean rightClick = false;
     GamePanel gamePanel;
 
     public int mouseScreenX, mouseScreenY;
@@ -25,6 +23,7 @@ public class MouseHandler implements MouseListener {
 
     public boolean itemInHand = false;
     public Item inHand;
+    
 
     public MouseHandler(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
@@ -35,6 +34,10 @@ public class MouseHandler implements MouseListener {
         if (e.getButton() == MouseEvent.BUTTON1) {
             leftDown = true;
         }
+        if (e.getButton() == MouseEvent.BUTTON3) {
+            rightDown = true;
+            
+        }
     }
 
     @Override
@@ -42,7 +45,12 @@ public class MouseHandler implements MouseListener {
         if (e.getButton() == MouseEvent.BUTTON1) {
             leftDown = false;
             leftClick = true;
-            dragging = false; 
+            dragging = false;
+        }
+        if (e.getButton() == MouseEvent.BUTTON3) {
+            rightDown = false;
+            rightClick = true;
+            
         }
     }
 
@@ -62,56 +70,67 @@ public class MouseHandler implements MouseListener {
             mouseWorldY = mouseScreenY + gamePanel.player.cameraY;
         }
 
-        
         if (leftClick) {
             leftClick = false;
+        }
+        if (rightClick) {
+            rightClick = false;
         }
     }
 
     public void draw(Graphics2D g2) {
-        if(itemInHand) {
-            g2.drawImage(inHand.image, mouseScreenX, mouseScreenY, inHand.containerWidth * gamePanel.scale, inHand.containerHeight * gamePanel.scale, null);
+        if (itemInHand && inHand != null) {
+            g2.drawImage(inHand.image, mouseScreenX, mouseScreenY,
+                    inHand.containerWidth * gamePanel.scale, inHand.containerHeight * gamePanel.scale, null);
 
-            Font font = new Font("TIMES NEW ROMAN", 1, 10 * gamePanel.scale);
+            Font font = new Font("TIMES NEW ROMAN", Font.BOLD, 10 * gamePanel.scale);
             g2.setFont(font);
             g2.setColor(Color.WHITE);
-            g2.drawString(String.valueOf(inHand.stackSize),mouseScreenX, mouseScreenY + gamePanel.scale + 17 * gamePanel.scale);
+            g2.drawString(String.valueOf(inHand.stackSize),
+                    mouseScreenX, mouseScreenY + inHand.containerHeight * gamePanel.scale);
         }
-        
     }
 
     public boolean touchingMouse(int screenX, int screenY, int width, int height) {
-        return mouseScreenX >= screenX && mouseScreenX < screenX + width && mouseScreenY >= screenY && mouseScreenY < screenY + height;
+        return mouseScreenX >= screenX && mouseScreenX < screenX + width
+                && mouseScreenY >= screenY && mouseScreenY < screenY + height;
     }
 
     public void pickUpItem(Item item, ItemContainer container) {
+        if (item == null) return;
+
         itemInHand = true;
         inHand = item;
         container.remove(item);
     }
 
     public void dropItem(ItemContainer container) {
-        itemInHand = false;
+        if (inHand == null) return;
+
         container.add(inHand);
+        itemInHand = false;
         inHand = null;
     }
 
-    public void pickUpItem(Item item, Hotbar hotbar) {
+    public void pickUpItem(Hotbar hotbar, int slot) {
+        String itemName = hotbar.getHotbarSlotName(slot);
+        if (itemName == null) return;
+
+        Item item = gamePanel.player.inventory.pickUpStack(itemName);
+        if (item == null) return;
+
         itemInHand = true;
-        pickUpItem(hotbar.player.inventory.pickUpStack(item.name),hotbar.player.inventory); 
-        
-        
+        inHand = item;
     }
 
     public void dropItem(Hotbar hotbar) {
-        if (hotbar.nullCheck()) {
-            hotbar.add(inHand);
-            return;
-        }
-        Item item = hotbar.findItem();
-        hotbar.add(inHand);
-        hotbar.player.inventory.add(item);
         
-    }
-}
+        if (inHand == null) return;
 
+        gamePanel.player.inventory.add(inHand);
+        itemInHand = false;
+        inHand = null;
+    }
+
+    
+}

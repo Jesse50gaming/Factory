@@ -16,7 +16,7 @@ public class ItemContainer {
     BufferedImage topImage, middleImage,bottomImage;
     Item[][] items;
     int screenX, screenY;
-    boolean open;
+    public boolean open;
     int closeTimer;
     int pixelWidth;
     int grabCooldown = 30;
@@ -211,20 +211,7 @@ public class ItemContainer {
         return null;
     }
 
-    private int findCol() {
-        int mouseX = gamePanel.mouseHandler.mouseScreenX;
-        double col = (mouseX - screenX) / 17.0 / gamePanel.scale;
-        int colRound = (int) Math.floor(col);
-        return colRound;
-    }
-
-    private int findRow() {
-        int mouseY = gamePanel.mouseHandler.mouseScreenY;
-        double row = (mouseY - screenY) / 17.0 / gamePanel.scale;
-        int rowRound = (int) Math.floor(row);
-        return rowRound;
-
-    }
+    
 
 
 

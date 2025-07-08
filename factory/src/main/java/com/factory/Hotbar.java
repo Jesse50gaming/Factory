@@ -1,169 +1,161 @@
 package com.factory;
 
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
-
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
 import com.factory.items.Item;
 
 public class Hotbar {
 
     GamePanel gamePanel;
-    int height,width;
-    BufferedImage topImage, middleImage,bottomImage;
-    Item[][] items;
+    public Player player;
+
+    int width;
     int screenX, screenY;
     int pixelWidth;
     int grabCooldown = 30;
-    public Player player;
+    int height;
+
+    BufferedImage middleImage, bottomImage;
+    String[] hotbarSlots;
 
     public Hotbar(GamePanel gamePanel, int height, Player player) {
-        this.player = player;
         this.gamePanel = gamePanel;
+        this.player = player;
+        this.width = 8;
         this.height = height;
-        setDefaults();
-    }
 
-    private void setDefaults() {
-        width = 8;
+        hotbarSlots = new String[width * height];
         pixelWidth = 138 * gamePanel.scale;
-        screenX =  gamePanel.screenWidth/2 - pixelWidth/2;
-        screenY = gamePanel.screenHeight - ((height - 1) * 17 * gamePanel.scale) - (1 * 18 * gamePanel.scale);
-        
-        items = new Item[width][height];
+        screenX = gamePanel.screenWidth / 2 - pixelWidth / 2;
+        screenY = gamePanel.screenHeight - (1 * 17 * gamePanel.scale) - (1 * 18 * gamePanel.scale);
+
         try {
-            topImage = ImageIO.read(getClass().getResourceAsStream("/GUI/containerTop.png"));
             middleImage = ImageIO.read(getClass().getResourceAsStream("/GUI/containerMiddle.png"));
             bottomImage = ImageIO.read(getClass().getResourceAsStream("/GUI/containerBottom.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     public void draw(Graphics2D g2) {
-
+        // bottom
+        g2.drawImage(bottomImage, screenX, screenY + 17 * (height - 1) * gamePanel.scale ,bottomImage.getWidth() * gamePanel.scale ,bottomImage.getHeight() * gamePanel.scale, null);
 
         // middle
-        for (int i = 1; i < height; i++) {
-            g2.drawImage(middleImage, screenX, screenY + (i - 1) * middleImage.getHeight() * gamePanel.scale,middleImage.getWidth() * gamePanel.scale ,middleImage.getHeight() * gamePanel.scale, null);
+        for (int i = 0; i < height - 1; i++) {
+            g2.drawImage(middleImage, screenX, screenY + i * middleImage.getHeight() * gamePanel.scale,middleImage.getWidth() * gamePanel.scale ,middleImage.getHeight() * gamePanel.scale, null);
         }
-
-        // bottom
-        g2.drawImage(bottomImage, screenX, screenY + (height - 1) * middleImage.getHeight() * gamePanel.scale ,bottomImage.getWidth() * gamePanel.scale ,bottomImage.getHeight() * gamePanel.scale, null);
-
-        //items 
 
         for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                if (items[x][y] == null) continue;
+            String itemName = hotbarSlots[x];
+            if (itemName == null) continue;
 
-                if (items[x][y].image == null) {
-                    System.out.println("Image is null at (" + x + "," + y + ")");
-                } else {
+            Item item = player.inventory.pickUpStack(itemName);
+            if (item == null) continue;
 
-                    g2.drawImage(items[x][y].image,screenX + gamePanel.scale + (17 * x) * gamePanel.scale,screenY +(17 * y) * gamePanel.scale,items[x][y].containerWidth * gamePanel.scale,items[x][y].containerHeight * gamePanel.scale,null);
+            //item
+            g2.drawImage(item.image,screenX + gamePanel.scale + (17 * x) * gamePanel.scale,screenY,item.containerWidth * gamePanel.scale,item.containerHeight * gamePanel.scale,null);
 
-                    Font font = new Font("TIMES NEW ROMAN", 1, 10 * gamePanel.scale);
-                    g2.setFont(font);
-                    g2.setColor(Color.WHITE);
-                    g2.drawString(String.valueOf(items[x][y].stackSize),screenX + gamePanel.scale + (17 * x) * gamePanel.scale,screenY + (17 * y) * gamePanel.scale + items[x][y].containerHeight * gamePanel.scale - 4);
-                }
-            }
+            //stack size
+            g2.setFont(new Font("TIMES NEW ROMAN", Font.BOLD, 10 * gamePanel.scale));
+            g2.setColor(Color.WHITE);
+            g2.drawString(String.valueOf(item.stackSize),screenX + gamePanel.scale + (17 * x) * gamePanel.scale,screenY + item.containerHeight * gamePanel.scale - 4);
         }
+
+        for (int x = 0; x < width; x++) {
+            String itemName = hotbarSlots[x+width];
+            if (itemName == null) continue;
+
+            Item item = player.inventory.pickUpStack(itemName);
+            if (item == null) continue;
+
+            //item
+            g2.drawImage(item.image,screenX + gamePanel.scale + (17 * x) * gamePanel.scale,screenY + 17 * gamePanel.scale ,item.containerWidth * gamePanel.scale,item.containerHeight * gamePanel.scale,null);
+
+            //stack size
+            g2.setFont(new Font("TIMES NEW ROMAN", Font.BOLD, 10 * gamePanel.scale));
+            g2.setColor(Color.WHITE);
+            g2.drawString(String.valueOf(item.stackSize),screenX + gamePanel.scale + (17 * x) * gamePanel.scale,screenY + 17 * gamePanel.scale + item.containerHeight * gamePanel.scale - 4);
+        }
+
+        /* 
+        for (int x = 0; x < width; x++) {
+            g2.setFont(new Font("TIMES NEW ROMAN", Font.BOLD, 10 * gamePanel.scale));
+            g2.setColor(Color.WHITE);
+            g2.drawString(Integer.toString(x),screenX + gamePanel.scale + (17 * x) * gamePanel.scale,screenY + 17 * gamePanel.scale - 4);
+        }
+
+        for (int x = 0; x < width; x++) {
+
+            g2.setFont(new Font("TIMES NEW ROMAN", Font.BOLD, 10 * gamePanel.scale));
+            g2.setColor(Color.WHITE);
+            g2.drawString(Integer.toString(x + width),screenX + gamePanel.scale + (17 * x) * gamePanel.scale,screenY + 17 * gamePanel.scale + 17 * gamePanel.scale - 4);
+        }
+        */
     }
 
     public void update() {
-        if (grabCooldown > 0) {
-            grabCooldown--;
+        
+        if (grabCooldown > 0) grabCooldown--;
+
+        if (gamePanel.mouseHandler.touchingMouse(screenX, screenY, pixelWidth, 17 * gamePanel.scale * height) && gamePanel.mouseHandler.leftClick && grabCooldown == 0) {
+
+            int col = findCol();
+            int row = findRow();
+            int slot = col + row * width;;
+
+            if (gamePanel.mouseHandler.itemInHand && gamePanel.mouseHandler.inHand != null) {
+                // assign hotbar slot
+                setHotbarSlot(slot, gamePanel.mouseHandler.inHand.name);
+            } else {
+                // pick up an item from inventory
+                Item item = getItemFromInventory(slot);
+                if (item != null) {
+                    gamePanel.mouseHandler.itemInHand = true;
+                    gamePanel.mouseHandler.inHand = item;
+                    player.inventory.remove(item);
+                }
+            }
+
+            grabCooldown = 30;
         }
-        
+    }
 
+    public void setHotbarSlot(int slot, String itemName) {
         
-
-        if (gamePanel.mouseHandler.touchingMouse(screenX,screenY,pixelWidth,height * 17 * gamePanel.scale) && gamePanel.mouseHandler.leftDown && grabCooldown == 0) {
+        if (slot >= 0 && slot < hotbarSlots.length) {
             
-
-            if (gamePanel.mouseHandler.itemInHand == false && findItem() != null && grabCooldown == 0) {
-                gamePanel.mouseHandler.pickUpItem(findItem(), this);
-               
-                grabCooldown = 30;
-            }
-
-            if (gamePanel.mouseHandler.itemInHand == true && grabCooldown == 0) {
-                gamePanel.mouseHandler.dropItem(this);
-                grabCooldown = 30;
-            }
-           
+            hotbarSlots[slot] = itemName;
         }
-
     }
 
-    public void add(Item item) {
-        if(item == null) {
-            return;
+    public String getHotbarSlotName(int slot) {
+        if (slot >= 0 && slot < hotbarSlots.length) {
+            return hotbarSlots[slot];
         }
-        
-        int x = findCol();
-        int y = findRow();
-
-        if (items[x][y] != null) {
-
-            gamePanel.mouseHandler.pickUpItem(items[x][y], this);
-
-        }
-        
-        items[x][y] = item;
-        items[x][y].containerX = x;
-        items[x][y].containerY = y;
-                
+        return null;
     }
 
-    public boolean nullCheck() {
-        int x = findCol();
-        int y = findRow();
-
-        return items[x][y] == null;
-    }
-
-    public void remove(Item item) {
-        items[item.containerX][item.containerY] = null;
-        
-    }
-
-    
-
-    public Item findItem() {
-        int mouseX = gamePanel.mouseHandler.mouseScreenX;
-        int mouseY = gamePanel.mouseHandler.mouseScreenY;
-
-        double col = (mouseX - screenX) / 17.0 / gamePanel.scale;
-        double row = (mouseY - screenY) / 17.0 / gamePanel.scale;
-
-        int colRound = (int) Math.floor(col);
-        int rowRound = (int) Math.floor(row);
-
-        return items[colRound][rowRound];
-
+    public Item getItemFromInventory(int slot) {
+        String name = getHotbarSlotName(slot);
+        if (name == null) return null;
+        return player.inventory.pickUpStack(name);
     }
 
     private int findCol() {
         int mouseX = gamePanel.mouseHandler.mouseScreenX;
         double col = (mouseX - screenX) / 17.0 / gamePanel.scale;
-        int colRound = (int) Math.floor(col);
-        return colRound;
+        return (int) Math.floor(col);
     }
-
     private int findRow() {
         int mouseY = gamePanel.mouseHandler.mouseScreenY;
         double row = (mouseY - screenY) / 17.0 / gamePanel.scale;
-        int rowRound = (int) Math.floor(row);
-        return rowRound;
-
+        return (int) Math.floor(row);
     }
-
 }
