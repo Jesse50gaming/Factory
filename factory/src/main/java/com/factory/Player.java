@@ -5,9 +5,12 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
+import com.factory.GUI.Hotbar;
+import com.factory.GUI.ItemContainer;
 import com.factory.Handlers.KeyHandler;
 import com.factory.Handlers.MouseHandler;
 import com.factory.items.CopperOre;
+import com.factory.items.IronChestItem;
 import com.factory.items.IronOre;
 
 
@@ -60,7 +63,7 @@ public class Player extends Entity {
 
         inventory.add(new IronOre(gamePanel, worldX, worldY, 1));
         inventory.add(new CopperOre(gamePanel, worldX, worldY, 5));
-
+        inventory.add(new IronChestItem(gamePanel,worldX,worldY,5));
         
         updateHitBox();
     }

@@ -1,4 +1,4 @@
-package com.factory;
+package com.factory.GUI;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -8,6 +8,8 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import com.factory.GamePanel;
+import com.factory.Player;
 import com.factory.items.Item;
 
 public class Hotbar {
@@ -60,7 +62,7 @@ public class Hotbar {
             if (item == null) continue;
 
             //item
-            g2.drawImage(item.image,screenX + gamePanel.scale + (17 * x) * gamePanel.scale,screenY,item.containerWidth * gamePanel.scale,item.containerHeight * gamePanel.scale,null);
+            g2.drawImage(item.image,screenX + gamePanel.scale + (17 * x) * gamePanel.scale,screenY + gamePanel.scale ,item.containerWidth * gamePanel.scale,item.containerHeight * gamePanel.scale,null);
 
             //stack size
             g2.setFont(new Font("TIMES NEW ROMAN", Font.BOLD, 10 * gamePanel.scale));
@@ -104,7 +106,7 @@ public class Hotbar {
         
         if (grabCooldown > 0) grabCooldown--;
 
-        if (gamePanel.mouseHandler.touchingMouse(screenX, screenY, pixelWidth, 17 * gamePanel.scale * height) && gamePanel.mouseHandler.leftClick && grabCooldown == 0) {
+        if (gamePanel.mouseHandler.touchingMouse(screenX, screenY, pixelWidth, 17 * gamePanel.scale * height) && gamePanel.mouseHandler.leftClick && grabCooldown == 0 && !gamePanel.mouseHandler.leftClickUsed) {
 
             int col = findCol();
             int row = findRow();
@@ -124,6 +126,7 @@ public class Hotbar {
             }
 
             grabCooldown = 30;
+            gamePanel.mouseHandler.useLeft();
         }
     }
 

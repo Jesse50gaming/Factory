@@ -10,7 +10,7 @@ public class CopperOre extends Item {
 
     public CopperOre(GamePanel gamePanel, int x, int y, int numberOfItems) {
         super(gamePanel, x, y, numberOfItems);
-        setDefaults();
+        
         setIndividualDefaults();
     }
 
@@ -23,7 +23,7 @@ public class CopperOre extends Item {
         name = "Copper Ore";
 
         maxStackSize = 100;
-        
+        placeable = false;
     }
 
 

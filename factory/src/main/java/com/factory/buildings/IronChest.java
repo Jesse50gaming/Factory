@@ -1,17 +1,16 @@
 package com.factory.buildings;
-
 import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
+
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
 import com.factory.GamePanel;
-import com.factory.ItemContainer;
+import com.factory.GUI.ItemContainer;
 
 public class IronChest extends Building {
 
-    BufferedImage image;
+    
     
     ItemContainer container;
     
@@ -22,8 +21,7 @@ public class IronChest extends Building {
     }
 
     public void setIndividualDefaults() {
-        width = 16 * gamePanel.scale;
-        height = 16 * gamePanel.scale;
+        
 
         container = new ItemContainer(gamePanel, 5);
         try {
@@ -32,6 +30,9 @@ public class IronChest extends Building {
            
             e.printStackTrace();
         }
+
+        width = image.getWidth() * gamePanel.scale;
+        height = image.getHeight() * gamePanel.scale;
     }
 
     
@@ -42,8 +43,11 @@ public class IronChest extends Building {
         screenX = worldX - gamePanel.player.cameraX;
         screenY = worldY - gamePanel.player.cameraY;
 
-        if (gamePanel.mouseHandler.touchingMouse(screenX, screenY, width, height) && gamePanel.mouseHandler.rightClick) {
+
+        
+        if (gamePanel.mouseHandler.touchingMouse(screenX, screenY, width, height) && gamePanel.mouseHandler.leftClick && !gamePanel.mouseHandler.leftClickUsed) {
             container.toggle();
+            gamePanel.mouseHandler.useLeft();
         }
     }
 
@@ -55,19 +59,19 @@ public class IronChest extends Building {
         width = image.getWidth() * gamePanel.scale;
         height = image.getHeight() * gamePanel.scale;
 
-        // container
-        if (container.open) {
-            container.draw(g2);
+        
+        
+        if (screenX + width >= 0 && screenX <= gamePanel.screenWidth && screenY + height >= 0 && screenY <= gamePanel.screenHeight) {
+            // chest
+            g2.drawImage(image, screenX, screenY, width, height, null);
+
         }
         
-        if (screenX + width < 0 || screenX > gamePanel.screenWidth || screenY + height < 0 || screenY > gamePanel.screenHeight) {
-            return;
-        }
+    }
 
-        // chest
-        g2.drawImage(image, screenX, screenY, width, height, null);
-
-        
+    public void remove() {
+        gamePanel.removeBuilding(this);
+        container.delete();
     }
 
 }

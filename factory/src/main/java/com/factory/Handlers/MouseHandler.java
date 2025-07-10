@@ -5,8 +5,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import com.factory.GamePanel;
-import com.factory.Hotbar;
-import com.factory.ItemContainer;
+import com.factory.GUI.Hotbar;
+import com.factory.GUI.ItemContainer;
 import com.factory.items.Item;
 
 public class MouseHandler implements MouseListener {
@@ -23,6 +23,9 @@ public class MouseHandler implements MouseListener {
 
     public boolean itemInHand = false;
     public Item inHand;
+
+    public boolean rightClickUsed = false;
+    public boolean leftClickUsed = false;
     
 
     public MouseHandler(GamePanel gamePanel) {
@@ -70,30 +73,36 @@ public class MouseHandler implements MouseListener {
             mouseWorldY = mouseScreenY + gamePanel.player.cameraY;
         }
 
-        if (leftClick) {
-            leftClick = false;
+        if (leftClick && itemInHand && !leftClickUsed) { 
+            inHand.place();
+            useLeft(); 
         }
+
         if (rightClick) {
             rightClick = false;
         }
+
+        if(leftClick) {
+            leftClick = false;
+        }
+
+        rightClickUsed = false;
+        leftClickUsed = false;
     }
 
     public void draw(Graphics2D g2) {
         if (itemInHand && inHand != null) {
-            g2.drawImage(inHand.image, mouseScreenX, mouseScreenY,
-                    inHand.containerWidth * gamePanel.scale, inHand.containerHeight * gamePanel.scale, null);
+            g2.drawImage(inHand.image, mouseScreenX, mouseScreenY,inHand.containerWidth * gamePanel.scale, inHand.containerHeight * gamePanel.scale, null);
 
             Font font = new Font("TIMES NEW ROMAN", Font.BOLD, 10 * gamePanel.scale);
             g2.setFont(font);
             g2.setColor(Color.WHITE);
-            g2.drawString(String.valueOf(inHand.stackSize),
-                    mouseScreenX, mouseScreenY + inHand.containerHeight * gamePanel.scale);
+            g2.drawString(String.valueOf(inHand.stackSize),mouseScreenX, mouseScreenY + inHand.containerHeight * gamePanel.scale);
         }
     }
 
     public boolean touchingMouse(int screenX, int screenY, int width, int height) {
-        return mouseScreenX >= screenX && mouseScreenX < screenX + width
-                && mouseScreenY >= screenY && mouseScreenY < screenY + height;
+        return mouseScreenX >= screenX && mouseScreenX < screenX + width&& mouseScreenY >= screenY && mouseScreenY < screenY + height;
     }
 
     public void pickUpItem(Item item, ItemContainer container) {
@@ -130,6 +139,14 @@ public class MouseHandler implements MouseListener {
         gamePanel.player.inventory.add(inHand);
         itemInHand = false;
         inHand = null;
+    }
+
+    public void useRight() {
+        rightClickUsed = true;
+    }
+
+    public void useLeft() {
+        leftClickUsed = true;
     }
 
     

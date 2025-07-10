@@ -18,6 +18,7 @@ public class TileManager {
     public Tile[] oreTile;
     public byte[][] mapTileNumber;
     public byte[][] oreMapNumber;
+    public short[][] oreCount;
     public String currentMap;
 
     // chunks
@@ -33,6 +34,7 @@ public class TileManager {
         backgroundTile = new Tile[25];
         oreTile = new Tile[25];
         mapTileNumber = new byte[gp.maxWorldCol][gp.maxWorldRow];
+        oreCount = new short[gp.maxWorldCol][gp.maxWorldRow];
 
         getTileImage();
         createMap();
@@ -77,6 +79,7 @@ public class TileManager {
         byte[][] map = new byte[MAP_WIDTH][MAP_HEIGHT];
         boolean[][] filled = new boolean[MAP_WIDTH][MAP_HEIGHT];
         byte[][] oreMap = new byte[MAP_WIDTH][MAP_HEIGHT];
+        
         
 
         // fill with unassigned
@@ -204,6 +207,7 @@ public class TileManager {
             queue.add(new Point(startX, startY));
             int count = 0;
             int patchSize = rand.nextInt(MIN_ORE_PATCH, MAX_ORE_PATCH);
+            int patchAvg = rand.nextInt(100,1000);
 
             while (!queue.isEmpty() && count < patchSize) {
                 Point point = queue.poll();
@@ -214,6 +218,8 @@ public class TileManager {
 
                 oreMap[x][y] = oreType;
                 hasOre[x][y] = true;
+
+                oreCount[x][y] = (short) rand.nextInt(patchAvg - patchAvg/10,patchAvg + patchAvg/10);
                 count++;
                 
 

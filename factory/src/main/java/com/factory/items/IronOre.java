@@ -10,7 +10,7 @@ public class IronOre extends Item {
 
     public IronOre(GamePanel gamePanel, int x, int y, int numberOfItems) {
         super(gamePanel, x, y, numberOfItems);
-        setDefaults();
+        
         setIndividualDefaults();
     }
 
@@ -23,8 +23,12 @@ public class IronOre extends Item {
         name = "Iron Ore";
 
         maxStackSize = 100;
+        placeable = false;
         
     }
+
+    
+
 
 
 

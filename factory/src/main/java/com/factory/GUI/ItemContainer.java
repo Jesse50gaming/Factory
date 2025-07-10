@@ -1,4 +1,4 @@
-package com.factory;
+package com.factory.GUI;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -8,9 +8,10 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import com.factory.GamePanel;
 import com.factory.items.Item;
 
-public class ItemContainer {
+public class ItemContainer extends GUI {
     GamePanel gamePanel;
     int height,width;
     BufferedImage topImage, middleImage,bottomImage;
@@ -26,6 +27,7 @@ public class ItemContainer {
         this.gamePanel = gamePanel;
         this.height = height; 
         setDefaults();
+
     }
 
     private void setDefaults() {
@@ -43,8 +45,9 @@ public class ItemContainer {
             e.printStackTrace();
         }
 
+        gamePanel.GUIHandler.add(this);
     }
-
+    @Override
     public void draw(Graphics2D g2) {
         if (!open) return;
 
@@ -139,6 +142,7 @@ public class ItemContainer {
 
     }
 
+    @Override
     public void update() {
         if (grabCooldown > 0) {
             grabCooldown--;
@@ -151,19 +155,20 @@ public class ItemContainer {
             drag();
         }
 
-        if (open && gamePanel.mouseHandler.touchingMouse(screenX,screenY + 12 * gamePanel.scale,pixelWidth,height * 17 * gamePanel.scale) && gamePanel.mouseHandler.leftDown && grabCooldown == 0) {
+        if (open && gamePanel.mouseHandler.touchingMouse(screenX,screenY + 12 * gamePanel.scale,pixelWidth,height * 17 * gamePanel.scale) && gamePanel.mouseHandler.leftClick && grabCooldown == 0 && !gamePanel.mouseHandler.leftClickUsed) {
             
 
             if (gamePanel.mouseHandler.itemInHand == false && findItem() != null && grabCooldown == 0) {
                 gamePanel.mouseHandler.pickUpItem(findItem(), this);
                 grabCooldown = 30;
+                
             }
 
             if (gamePanel.mouseHandler.itemInHand == true && grabCooldown == 0) {
                 gamePanel.mouseHandler.dropItem(this);
                 grabCooldown = 30;
             }
-           
+            gamePanel.mouseHandler.useLeft();
         }
 
     }
@@ -211,10 +216,9 @@ public class ItemContainer {
         return null;
     }
 
-    
+    public void delete() {
+        gamePanel.GUIHandler.remove(this);
+    }
 
-
-
-    
 
 }
