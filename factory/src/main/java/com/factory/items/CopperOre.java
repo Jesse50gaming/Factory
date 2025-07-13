@@ -26,6 +26,11 @@ public class CopperOre extends Item {
         placeable = false;
     }
 
+    @Override
+    public void update() {
+
+    }
+
 
 
 }

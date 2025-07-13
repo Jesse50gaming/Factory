@@ -89,7 +89,11 @@ public class ItemContainer extends GUI {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 if(items[x][y] != null) {
-                    continue;
+                    if (items[x][y].merge(item)) {
+                        return;
+                    } else {
+                        continue;
+                    }  
                 }
                 items[x][y] = item;
                 items[x][y].containerX = x;
@@ -98,6 +102,7 @@ public class ItemContainer extends GUI {
                 
             }
         }
+        checkForMerge();
     }
 
     public void remove(Item item) {
@@ -148,7 +153,7 @@ public class ItemContainer extends GUI {
         if (closeTimer > 0) {
             closeTimer--;
         }
-        checkForMerge();
+        
         
         
         if (open && gamePanel.mouseHandler.touchingMouse(screenX,screenY,pixelWidth,12 * gamePanel.scale) && gamePanel.mouseHandler.leftDown) {
@@ -171,13 +176,24 @@ public class ItemContainer extends GUI {
             gamePanel.mouseHandler.useLeft();
         }
 
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                if (items[x][y] == null) continue;
+                items[x][y].update();
+                
+                if (items[x][y].checkIfGone()) {
+                    items[x][y] = null;
+                }
+            }
+        }
+
     }
 
     public void checkForMerge() {
-    Item[] itemList = new Item[width * height];
-    int count = 0;
+        Item[] itemList = new Item[width * height];
+        int count = 0;
 
-    // Flatten items into a list
+        // Flatten items into a list
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 if (items[x][y] == null) continue;

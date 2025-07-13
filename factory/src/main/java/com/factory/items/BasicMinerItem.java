@@ -17,7 +17,7 @@ public class BasicMinerItem extends Item {
         name = "Basic Miner";
         tileHeight = 2;
         tileWidth = 2;
-        
+        maxStackSize = 100;
         buildingType = com.factory.buildings.BasicMiner.class;
 
         try {
@@ -26,6 +26,11 @@ public class BasicMinerItem extends Item {
             e.printStackTrace();
         }
         
+    }
+
+    @Override
+    public void update() {
+    
     }
 
 }

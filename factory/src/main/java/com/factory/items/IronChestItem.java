@@ -29,6 +29,11 @@ public class IronChestItem extends Item {
 
     }
 
+    @Override
+    public void update() {
+
+    }
+
 
 
 }

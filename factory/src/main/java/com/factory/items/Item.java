@@ -13,7 +13,7 @@ public class Item {
     boolean placeable = false;
     public int stackSize;
     int maxStackSize;
-    boolean inContainer = true;
+    public boolean onFloor;
     public int containerHeight;
     public int containerX,containerY;
     public String name;
@@ -35,6 +35,7 @@ public class Item {
     }
 
     public void setDefaults() {
+        maxStackSize = 100;
         containerHeight = 16;
         containerWidth = 16;
         groundHeight = gamePanel.tileSize / 4;
@@ -67,7 +68,7 @@ public class Item {
                     Building newBuilding = buildingType.getConstructor(GamePanel.class, int.class, int.class).newInstance(gamePanel, placeX, placeY);
 
                     gamePanel.buildings.add(newBuilding);
-                    
+                    checkIfGone();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -76,12 +77,28 @@ public class Item {
     }
 
     public boolean merge(Item item) {
+        
+        
         if (item.getClass() == this.getClass() && this.name.equals(item.name)) {
+            if(stackSize == maxStackSize || item.stackSize == maxStackSize || stackSize + item.stackSize > maxStackSize) return false;
             this.stackSize += item.stackSize;
             return true;
         }
         return false;
     }
+
+    public void update() {
+        
+    }
+
+    public boolean checkIfGone() {
+        if (stackSize < 1) {
+            return true;
+        }
+        return false;
+    }
+
+    
 
     
 

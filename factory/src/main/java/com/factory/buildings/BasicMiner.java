@@ -91,7 +91,7 @@ public class BasicMiner extends Building {
         }
 
         try {
-            Item newItem = gamePanel.tileManager.oreTypeClass[col][row].getConstructor(GamePanel.class, int.class, int.class, int.class).newInstance(gamePanel, worldX, worldY, miningProductivity);
+            Item newItem = gamePanel.tileManager.oreTypeClass[col][row].getConstructor(GamePanel.class, int.class).newInstance(gamePanel, miningProductivity);
 
             container.add(newItem);
 
