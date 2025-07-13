@@ -1,13 +1,23 @@
 package com.factory.buildings;
 
 import java.awt.Graphics2D;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Random;
+
+import javax.imageio.ImageIO;
 
 import com.factory.GamePanel;
+import com.factory.GUI.ItemContainer;
+import com.factory.items.Item;
 
 public class BasicMiner extends Building {
 
-    int miningSpeed = 5;  //how many seconds to mine once
-    int miningCooldown = 5;
+    int miningSpeed = 5 * gamePanel.FPS;  //how many seconds to mine once
+    int miningCooldown = miningSpeed;
+    int miningProductivity = 1; // how many ores are produced
+
+    ItemContainer container;
 
     public BasicMiner(GamePanel gamePanel, int worldX, int worldY) {
         super(gamePanel, worldX, worldY);
@@ -16,29 +26,79 @@ public class BasicMiner extends Building {
     }
 
     private void setIndividualDefaults() {
-        height = 2;
-        width = 2;
+    
+        try {
+            image = ImageIO.read(getClass().getResourceAsStream("/buildings/basicMiner.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        } 
+
+        width = image.getWidth() * gamePanel.scale;
+        height = image.getHeight() * gamePanel.scale;
+
+        container = new ItemContainer(gamePanel, 1);
+        markTiles();
     }
 
     @Override
     public void update() {
 
+        screenX = worldX - gamePanel.player.cameraX;
+        screenY = worldY - gamePanel.player.cameraY;
+
         if(miningCooldown == 0) {
             mine();
         }
 
+        if (gamePanel.mouseHandler.leftClick && !gamePanel.mouseHandler.leftClickUsed && gamePanel.mouseHandler.touchingMouse(screenX, screenY, width, height)) {
+            container.toggle();
+        }
 
-        
         miningCooldown--;
     }
 
     @Override
     public void paint(Graphics2D g2) {
+
+        width = image.getWidth() * gamePanel.scale;
+        height = image.getHeight() * gamePanel.scale;
+
+
+        if (screenX + width >= 0 && screenX <= gamePanel.screenWidth && screenY + height >= 0 && screenY <= gamePanel.screenHeight) { 
+            g2.drawImage(image,screenX,screenY,width, height,null);
+        }
         
     }
 
     public void mine() {
         miningCooldown = miningSpeed;
+        int col;
+        int row;
+
+        Random rand = new Random();
+
+        col = rand.nextInt(worldX / gamePanel.tileSize, worldX / gamePanel.tileSize + width / gamePanel.tileSize);
+        row = rand.nextInt(worldY / gamePanel.tileSize, worldY / gamePanel.tileSize + height / gamePanel.tileSize);
+
+        if (!gamePanel.tileManager.hasOre[col][row]) {
+            return;
+        }
+        gamePanel.tileManager.oreCount[col][row] -= miningProductivity;
+        
+        if (gamePanel.tileManager.oreCount[col][row] < 1) {
+            gamePanel.tileManager.hasOre[col][row] = false;
+        }
+
+        try {
+            Item newItem = gamePanel.tileManager.oreTypeClass[col][row].getConstructor(GamePanel.class, int.class, int.class, int.class).newInstance(gamePanel, worldX, worldY, miningProductivity);
+
+            container.add(newItem);
+
+        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException |InvocationTargetException | NoSuchMethodException | SecurityException e) {
+
+            e.printStackTrace();
+        }
     }
+
 
 }

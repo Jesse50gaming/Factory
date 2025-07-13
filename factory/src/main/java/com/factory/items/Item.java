@@ -67,7 +67,7 @@ public class Item {
                     Building newBuilding = buildingType.getConstructor(GamePanel.class, int.class, int.class).newInstance(gamePanel, placeX, placeY);
 
                     gamePanel.buildings.add(newBuilding);
-
+                    
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -75,6 +75,12 @@ public class Item {
         }
     }
 
-
+    public boolean merge(Item item) {
+        if (item.getClass() == this.getClass() && this.name.equals(item.name)) {
+            this.stackSize += item.stackSize;
+            return true;
+        }
+        return false;
+    }
 
 }

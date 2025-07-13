@@ -12,19 +12,17 @@ import com.factory.GamePanel;
 import com.factory.items.Item;
 
 public class ItemContainer extends GUI {
-    GamePanel gamePanel;
     int height,width;
     BufferedImage topImage, middleImage,bottomImage;
     Item[][] items;
     int screenX, screenY;
-    public boolean open;
     int closeTimer;
     int pixelWidth;
     int grabCooldown = 30;
 
 
     public ItemContainer(GamePanel gamePanel, int height) {
-        this.gamePanel = gamePanel;
+        super(gamePanel);
         this.height = height; 
         setDefaults();
 
@@ -45,12 +43,12 @@ public class ItemContainer extends GUI {
             e.printStackTrace();
         }
 
-        gamePanel.GUIHandler.add(this);
+        
     }
     @Override
     public void draw(Graphics2D g2) {
         if (!open) return;
-
+        
         // top
         g2.drawImage(topImage, screenX, screenY,topImage.getWidth() * gamePanel.scale ,topImage.getHeight() * gamePanel.scale, null);
 
@@ -150,7 +148,9 @@ public class ItemContainer extends GUI {
         if (closeTimer > 0) {
             closeTimer--;
         }
-
+        checkForMerge();
+        
+        
         if (open && gamePanel.mouseHandler.touchingMouse(screenX,screenY,pixelWidth,12 * gamePanel.scale) && gamePanel.mouseHandler.leftDown) {
             drag();
         }
@@ -172,6 +172,41 @@ public class ItemContainer extends GUI {
         }
 
     }
+
+    public void checkForMerge() {
+    Item[] itemList = new Item[width * height];
+    int count = 0;
+
+    // Flatten items into a list
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                if (items[x][y] == null) continue;
+                itemList[count++] = items[x][y];
+            }
+        }
+
+        // Merge duplicates
+        for (int i = 0; i < count; i++) {
+            if (itemList[i] == null) continue;
+            for (int j = i + 1; j < count; j++) {
+                if (itemList[j] == null) continue;
+                if (itemList[i].merge(itemList[j])) {
+                    itemList[j] = null; // Manually null merged item
+                }
+            }
+        }
+
+        // Rebuild the grid from merged list
+        for (int y = 0; y < height; y++)
+            for (int x = 0; x < width; x++)
+                items[x][y] = null;
+
+        for (Item item : itemList) {
+            if (item != null)
+                add(item);
+        }
+    }
+
 
     private Item findItem() {
         int mouseX = gamePanel.mouseHandler.mouseScreenX;

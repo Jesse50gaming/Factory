@@ -33,6 +33,8 @@ public class IronChest extends Building {
 
         width = image.getWidth() * gamePanel.scale;
         height = image.getHeight() * gamePanel.scale;
+
+        markTiles();
     }
 
     

@@ -147,6 +147,7 @@ public class MouseHandler implements MouseListener {
 
     public void useLeft() {
         leftClickUsed = true;
+        
     }
 
     

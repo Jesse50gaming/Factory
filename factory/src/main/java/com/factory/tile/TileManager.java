@@ -9,6 +9,7 @@ import java.util.*;
 import javax.imageio.ImageIO;
 
 import com.factory.GamePanel;
+import com.factory.items.Item;
 
 public class TileManager {
 
@@ -20,14 +21,14 @@ public class TileManager {
     public byte[][] oreMapNumber;
     public short[][] oreCount;
     public String currentMap;
-
+    public Class<? extends Item>[][] oreTypeClass = new Class[CHUNK_SIZE * CHUNK_COLS][CHUNK_SIZE * CHUNK_ROWS];
     // chunks
     public static final int CHUNK_SIZE = 50;
     public static final int CHUNK_COLS = 1000 / CHUNK_SIZE;//up to 10000
     public static final int CHUNK_ROWS = 1000 / CHUNK_SIZE;
     public Chunk[][] chunks = new Chunk[CHUNK_COLS][CHUNK_ROWS];
 
-    boolean[][] hasOre = new boolean[CHUNK_SIZE * CHUNK_COLS][CHUNK_SIZE * CHUNK_ROWS];
+    public boolean[][] hasOre = new boolean[CHUNK_SIZE * CHUNK_COLS][CHUNK_SIZE * CHUNK_ROWS];
 
     public TileManager(GamePanel gp) {
         this.gp = gp;
@@ -74,7 +75,9 @@ public class TileManager {
         final int MAX_BIOMES = TOTAL_TILES / BIOME_SIZE;
         final int MIN_ORE_PATCH = 20;
         final int MAX_ORE_PATCH = 120;
-        final int MAX_ORE_PATCHES = MAP_HEIGHT * MAP_WIDTH / 4000; 
+        final int MAX_ORE_PATCHES = MAP_HEIGHT * MAP_WIDTH / 1000; 
+
+        
 
         byte[][] map = new byte[MAP_WIDTH][MAP_HEIGHT];
         boolean[][] filled = new boolean[MAP_WIDTH][MAP_HEIGHT];
@@ -218,6 +221,12 @@ public class TileManager {
 
                 oreMap[x][y] = oreType;
                 hasOre[x][y] = true;
+
+                if(oreType == 1) {
+                    oreTypeClass[x][y] = com.factory.items.IronOre.class;
+                } else if (oreType == 2) {
+                    oreTypeClass[x][y] = com.factory.items.CopperOre.class;;
+                }
 
                 oreCount[x][y] = (short) rand.nextInt(patchAvg - patchAvg/10,patchAvg + patchAvg/10);
                 count++;

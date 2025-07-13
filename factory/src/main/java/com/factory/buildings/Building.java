@@ -21,13 +21,17 @@ public class Building {
 
     
     private void setDefaults() {
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
+        gamePanel.buildings.add(this);
+    }
+
+    public void markTiles() {
+        int tileHeight = height / gamePanel.tileSize;
+        int tileWidth = width / gamePanel.tileSize;
+        for (int y = 0; y < tileHeight; y++) {
+            for (int x = 0; x < tileWidth; x++) {
                 gamePanel.hasObject[x+worldX/gamePanel.tileSize][y + worldY /gamePanel.tileSize] = true;
             }
         }
-
-        gamePanel.buildings.add(this);
     }
 
 

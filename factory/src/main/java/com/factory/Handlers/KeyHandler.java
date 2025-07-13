@@ -9,7 +9,8 @@ public class KeyHandler implements KeyListener {
     public boolean sPressed;
 	public boolean dPressed;
     public boolean aPressed;
-    public boolean bPressed;
+    public boolean ePressed;
+    public boolean escPressed;
 
 
 
@@ -32,8 +33,11 @@ public class KeyHandler implements KeyListener {
         if (e.getKeyCode() == KeyEvent.VK_D) {
             dPressed = true;
         }
-        if (e.getKeyCode() == KeyEvent.VK_B) {
-            bPressed = true;
+        if (e.getKeyCode() == KeyEvent.VK_E) {
+            ePressed = true;
+        }
+        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            escPressed = true;
         }
         
 
@@ -53,8 +57,11 @@ public class KeyHandler implements KeyListener {
         if (e.getKeyCode() == KeyEvent.VK_D) {
             dPressed = false;
         }
-        if (e.getKeyCode() == KeyEvent.VK_B) {
-            bPressed = false;
+        if (e.getKeyCode() == KeyEvent.VK_E) {
+            ePressed = false;
+        }
+        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            escPressed = false;
         }
         
 

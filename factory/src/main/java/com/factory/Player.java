@@ -9,6 +9,7 @@ import com.factory.GUI.Hotbar;
 import com.factory.GUI.ItemContainer;
 import com.factory.Handlers.KeyHandler;
 import com.factory.Handlers.MouseHandler;
+import com.factory.items.BasicMinerItem;
 import com.factory.items.CopperOre;
 import com.factory.items.IronChestItem;
 import com.factory.items.IronOre;
@@ -48,6 +49,7 @@ public class Player extends Entity {
     }
 
     private void setDefaultValues() {
+        
         worldX = 200 * gamePanel.tileSize;
         worldY = 200 * gamePanel.tileSize;
         width = 1;
@@ -64,8 +66,9 @@ public class Player extends Entity {
         inventory.add(new IronOre(gamePanel, worldX, worldY, 1));
         inventory.add(new CopperOre(gamePanel, worldX, worldY, 5));
         inventory.add(new IronChestItem(gamePanel,worldX,worldY,5));
-        
+        inventory.add(new BasicMinerItem(gamePanel, worldX,worldY, 5));
         updateHitBox();
+        
     }
 
     public void update() {
@@ -76,7 +79,7 @@ public class Player extends Entity {
     }
 
     public void keyBinds() {
-        if (keyHandler.bPressed) {
+        if (keyHandler.ePressed) {
             inventory.toggle();
         }  
     }
@@ -100,7 +103,6 @@ public class Player extends Entity {
         int drawX = worldX - cameraX;
         int drawY = worldY - cameraY;
         g2.drawImage(currentImage, drawX, drawY, width * (int) (gamePanel.tileSize * scale), height * (int) (gamePanel.tileSize * scale), null);
-        inventory.draw(g2);
         hotbar.draw(g2);
     }
 
