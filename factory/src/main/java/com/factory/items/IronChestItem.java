@@ -8,8 +8,8 @@ import com.factory.GamePanel;
 
 public class IronChestItem extends Item {
 
-    public IronChestItem(GamePanel gamePanel,int x, int y, int numberOfItems) {
-        super(gamePanel, x, y, numberOfItems);
+    public IronChestItem(GamePanel gamePanel, int numberOfItems) {
+        super(gamePanel, numberOfItems);
         setIndividualDefaults();
     }
 

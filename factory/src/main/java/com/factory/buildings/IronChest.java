@@ -30,7 +30,7 @@ public class IronChest extends Building {
            
             e.printStackTrace();
         }
-
+        item = com.factory.items.IronChestItem.class;
         width = image.getWidth() * gamePanel.scale;
         height = image.getHeight() * gamePanel.scale;
 
@@ -51,6 +51,7 @@ public class IronChest extends Building {
             container.toggle();
             gamePanel.mouseHandler.useLeft();
         }
+        checkForDestruction();
     }
 
     

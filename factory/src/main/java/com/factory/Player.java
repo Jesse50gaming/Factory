@@ -63,10 +63,10 @@ public class Player extends Entity {
         hotbar = new Hotbar(gamePanel, 2,this);
         
 
-        inventory.add(new IronOre(gamePanel, worldX, worldY, 1));
-        inventory.add(new CopperOre(gamePanel, worldX, worldY, 5));
-        inventory.add(new IronChestItem(gamePanel,worldX,worldY,5));
-        inventory.add(new BasicMinerItem(gamePanel, worldX,worldY, 5));
+        inventory.add(new IronOre(gamePanel, 1));
+        inventory.add(new CopperOre(gamePanel, 5));
+        inventory.add(new IronChestItem(gamePanel,5));
+        inventory.add(new BasicMinerItem(gamePanel, 5));
         updateHitBox();
         
     }

@@ -185,25 +185,24 @@ public class ItemContainer extends GUI {
             }
         }
 
-        // Merge duplicates
+        // merge duplicates
         for (int i = 0; i < count; i++) {
             if (itemList[i] == null) continue;
             for (int j = i + 1; j < count; j++) {
                 if (itemList[j] == null) continue;
                 if (itemList[i].merge(itemList[j])) {
-                    itemList[j] = null; // Manually null merged item
+                    itemList[j] = null; // manually null merged item
                 }
             }
         }
 
-        // Rebuild the grid from merged list
+        // rebuild the grid from merged list
         for (int y = 0; y < height; y++)
             for (int x = 0; x < width; x++)
                 items[x][y] = null;
 
         for (Item item : itemList) {
-            if (item != null)
-                add(item);
+            if (item != null) add(item);
         }
     }
 

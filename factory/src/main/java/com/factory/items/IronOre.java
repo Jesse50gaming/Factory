@@ -8,8 +8,8 @@ import com.factory.GamePanel;
 
 public class IronOre extends Item {
 
-    public IronOre(GamePanel gamePanel, int x, int y, int numberOfItems) {
-        super(gamePanel, x, y, numberOfItems);
+    public IronOre(GamePanel gamePanel, int numberOfItems) {
+        super(gamePanel, numberOfItems);
         
         setIndividualDefaults();
     }

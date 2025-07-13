@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+import java.util.List;
 import java.awt.Color;
 
 
@@ -63,6 +64,8 @@ public class GamePanel extends JPanel implements Runnable {
     //objects
     public ArrayList<Building> buildings = new ArrayList<>();
     public boolean[][] hasObject = new boolean[maxWorldCol][maxWorldRow];
+
+    List<Building> buildingsToRemove = new ArrayList<>();
     
 
     public GamePanel() {
@@ -120,9 +123,14 @@ public class GamePanel extends JPanel implements Runnable {
     private void update() {
         player.update();
         
-        for (Building building: buildings) {
+        for (Building building : buildings) {
             building.update();
         }
+
+        for (Building building: buildingsToRemove) {
+            buildings.remove(building);
+        }
+        
         
         GUIHandler.update();
         mouseHandler.updateMouse();
@@ -152,6 +160,24 @@ public class GamePanel extends JPanel implements Runnable {
     public void removeBuilding(Building building) {
         buildings.remove(building);
         hasObject[building.worldX /tileSize][building.worldY / tileSize] = false;
+    }
+
+    public void destroyBuilding(Building building) {
+        buildingsToRemove.add(building);
+
+        int startX = building.worldX / tileSize;
+        int startY = building.worldY / tileSize;
+        int tileWidth = building.width / tileSize;
+        int tileHeight = building.height / tileSize;
+
+        for (int y = 0; y < tileHeight; y++) {
+            for (int x = 0; x < tileWidth; x++) {
+                hasObject[startX + x][startY + y] = false;
+            }
+        }
+
+       
+        building = null;
     }
 
 

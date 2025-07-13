@@ -11,13 +11,14 @@ public class Item {
 
     public BufferedImage image;
     boolean placeable = false;
-    int x,y;
     public int stackSize;
     int maxStackSize;
     boolean inContainer = true;
     public int containerHeight;
     public int containerX,containerY;
     public String name;
+
+    public int worldX,worldY;
 
     public int containerWidth;
     int groundHeight, groundWidth;
@@ -26,10 +27,9 @@ public class Item {
     Class<? extends Building> buildingType;
     
 
-    public Item(GamePanel gamePanel,int x, int y, int numberOfItems) {
+    public Item(GamePanel gamePanel, int numberOfItems) {
         this.gamePanel = gamePanel;
-        this.x = x;
-        this.y = y;
+
         this.stackSize = numberOfItems;
         setDefaults();
     }
@@ -82,5 +82,7 @@ public class Item {
         }
         return false;
     }
+
+    
 
 }

@@ -8,8 +8,8 @@ import com.factory.GamePanel;
 
 public class CopperOre extends Item {
 
-    public CopperOre(GamePanel gamePanel, int x, int y, int numberOfItems) {
-        super(gamePanel, x, y, numberOfItems);
+    public CopperOre(GamePanel gamePanel, int numberOfItems) {
+        super(gamePanel, numberOfItems);
         
         setIndividualDefaults();
     }

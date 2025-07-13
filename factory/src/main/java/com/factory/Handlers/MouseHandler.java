@@ -7,6 +7,7 @@ import java.awt.event.MouseListener;
 import com.factory.GamePanel;
 import com.factory.GUI.Hotbar;
 import com.factory.GUI.ItemContainer;
+import com.factory.buildings.Building;
 import com.factory.items.Item;
 
 public class MouseHandler implements MouseListener {
@@ -78,6 +79,10 @@ public class MouseHandler implements MouseListener {
             useLeft(); 
         }
 
+        if (rightDown) {
+            
+        }
+
         if (rightClick) {
             rightClick = false;
         }
@@ -86,9 +91,12 @@ public class MouseHandler implements MouseListener {
             leftClick = false;
         }
 
+
+
         rightClickUsed = false;
         leftClickUsed = false;
     }
+
 
     public void draw(Graphics2D g2) {
         if (itemInHand && inHand != null) {

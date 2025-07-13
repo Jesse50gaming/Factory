@@ -6,8 +6,8 @@ import com.factory.GamePanel;
 
 public class BasicMinerItem extends Item {
 
-    public BasicMinerItem(GamePanel gamePanel, int x, int y, int numberOfItems) {
-        super(gamePanel, x, y, numberOfItems);
+    public BasicMinerItem(GamePanel gamePanel, int numberOfItems) {
+        super(gamePanel, numberOfItems);
         
         setIndividualDefaults();
     }

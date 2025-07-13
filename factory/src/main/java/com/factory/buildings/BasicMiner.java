@@ -35,7 +35,7 @@ public class BasicMiner extends Building {
 
         width = image.getWidth() * gamePanel.scale;
         height = image.getHeight() * gamePanel.scale;
-
+        item = com.factory.items.BasicMinerItem.class;
         container = new ItemContainer(gamePanel, 1);
         markTiles();
     }
@@ -54,6 +54,7 @@ public class BasicMiner extends Building {
             container.toggle();
         }
 
+        checkForDestruction();
         miningCooldown--;
     }
 
