@@ -18,6 +18,7 @@ import com.factory.Handlers.GUIHandler;
 import com.factory.Handlers.KeyHandler;
 import com.factory.Handlers.MouseHandler;
 import com.factory.buildings.Building;
+import com.factory.items.Item;
 import com.factory.tile.TileManager;
 
 
@@ -63,10 +64,12 @@ public class GamePanel extends JPanel implements Runnable {
 
     //objects
     public ArrayList<Building> buildings = new ArrayList<>();
+    public ArrayList<Item> floorItems = new ArrayList<>();
     public boolean[][] hasObject = new boolean[maxWorldCol][maxWorldRow];
+    public boolean[][] hasItem = new boolean[maxWorldCol * 2][maxWorldRow * 2];
 
     List<Building> buildingsToRemove = new ArrayList<>();
-    
+    List<Item> itemsToRemove = new ArrayList<>();
 
     public GamePanel() {
 
@@ -130,6 +133,10 @@ public class GamePanel extends JPanel implements Runnable {
         for (Building building: buildingsToRemove) {
             buildings.remove(building);
         }
+
+        for (Item item : itemsToRemove) {
+            floorItems.remove(item);
+        }
         
         
         GUIHandler.update();
@@ -149,6 +156,10 @@ public class GamePanel extends JPanel implements Runnable {
 
         for (Building building : buildings) {
             building.paint(g2);
+        }
+
+        for (Item item : floorItems) {
+            item.paint(g2);
         }
 
         player.paint(g2);
@@ -178,6 +189,36 @@ public class GamePanel extends JPanel implements Runnable {
 
        
         building = null;
+    }
+
+    public void addFloorItem(Item item) {
+        boolean foundOpenSpot = false;
+
+        item.worldGroundCol = (int) Math.floor(item.worldX/(tileSize/2));
+        item.worldGroundRow = (int) Math.floor(item.worldY/(tileSize/2));
+
+        item.worldX = item.worldGroundCol * (tileSize / 2);
+        item.worldY = item.worldGroundRow * (tileSize / 2);
+
+        while (!foundOpenSpot) {
+            if (!hasItem[item.worldGroundCol][item.worldGroundRow]) {
+                hasItem[item.worldGroundCol][item.worldGroundRow] = true;
+                foundOpenSpot = true;
+            } else {
+                item.worldGroundCol++;
+
+                item.worldX = item.worldGroundCol * (tileSize / 2);
+                item.worldY = item.worldGroundRow * (tileSize / 2);
+            }
+        
+        }
+        floorItems.add(item);
+    }
+
+    public void removeFloorItem(Item item) {
+        hasItem[item.worldGroundCol][item.worldGroundRow] = false;
+        item.pickUp();
+        itemsToRemove.add(item);
     }
 
 

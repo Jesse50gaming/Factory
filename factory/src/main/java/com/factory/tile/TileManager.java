@@ -21,6 +21,7 @@ public class TileManager {
     public byte[][] oreMapNumber;
     public short[][] oreCount;
     public String currentMap;
+    @SuppressWarnings("unchecked")
     public Class<? extends Item>[][] oreTypeClass = new Class[CHUNK_SIZE * CHUNK_COLS][CHUNK_SIZE * CHUNK_ROWS];
     // chunks
     public static final int CHUNK_SIZE = 50;

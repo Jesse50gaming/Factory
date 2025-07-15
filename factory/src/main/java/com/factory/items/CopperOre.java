@@ -30,6 +30,10 @@ public class CopperOre extends Item {
     public void update() {
 
     }
+    @Override
+    public Item cloneItem(int amount) {
+        return new CopperOre(gamePanel, amount);
+    }
 
 
 

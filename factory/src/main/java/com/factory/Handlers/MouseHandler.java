@@ -26,6 +26,8 @@ public class MouseHandler implements MouseListener {
 
     public boolean rightClickUsed = false;
     public boolean leftClickUsed = false;
+
+    public int dropCooldown = 0;
     
 
     public MouseHandler(GamePanel gamePanel) {
@@ -77,6 +79,27 @@ public class MouseHandler implements MouseListener {
             inHand.place();
             useLeft(); 
         }
+
+        if (dropCooldown > 0) {
+            dropCooldown--;
+        }
+
+        if (itemInHand && gamePanel.keyHandler.zPressed && dropCooldown == 0) {
+            if (inHand.stackSize > 0) {
+                Item dropItem = inHand.splitItem(1);
+
+                if (dropItem != null) {
+                    dropItem.putOnFloor(mouseWorldX, mouseWorldY);
+                    dropCooldown = 15;
+
+                    if (inHand.checkIfGone()) {
+                        inHand = null;
+                        itemInHand = false;
+                    }
+                }
+            }
+        }
+
 
         if (itemInHand) {
             inHand.update();

@@ -1,8 +1,11 @@
 package com.factory;
 
 import java.awt.Graphics2D;
+
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+
+
 import javax.imageio.ImageIO;
 
 import com.factory.GUI.Hotbar;
@@ -13,6 +16,7 @@ import com.factory.items.BasicMinerItem;
 import com.factory.items.CopperOre;
 import com.factory.items.IronChestItem;
 import com.factory.items.IronOre;
+import com.factory.items.Item;
 
 
 public class Player extends Entity {
@@ -37,6 +41,8 @@ public class Player extends Entity {
 
     public boolean controllable = true;
 
+    int pickUpRange;
+
     
     
 
@@ -54,11 +60,12 @@ public class Player extends Entity {
         worldY = 200 * gamePanel.tileSize;
         width = 1;
         height = 1;
-        speed = 3 * gamePanel.scale;
+        speed = 2 * gamePanel.scale;
         currentImage = down1; 
         health = 100;
         maxHealth = 100;
         damage = 10;
+        pickUpRange = 2;
         inventory = new ItemContainer(gamePanel, 10);
         hotbar = new Hotbar(gamePanel, 2,this);
         
@@ -82,6 +89,9 @@ public class Player extends Entity {
         if (keyHandler.ePressed) {
             inventory.toggle();
         }  
+        if (keyHandler.fPressed) {
+            pickUpItems();
+        }
     }
 
     private void loadPlayerImages() {
@@ -195,6 +205,30 @@ public class Player extends Entity {
         }
         
         
+    }
+
+    public void pickUpItems() {
+
+        int startCol = worldX / (gamePanel.tileSize / 2);
+        int startRow = worldY / (gamePanel.tileSize / 2);
+
+        for (int x = 0; x < pickUpRange; x++) {
+            for (int y = 0; y < pickUpRange; y++) {
+                if (gamePanel.hasItem[startCol + x][startRow + y]) {
+                    for (Item item : gamePanel.floorItems) {
+                        if (item.worldGroundCol == startCol + x && item.worldGroundRow == startRow + y) {
+                            addItem(item);
+                            gamePanel.removeFloorItem(item);
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+    public void addItem(Item item) {
+        inventory.add(item);
     }
 
     public void updateHitBox() {

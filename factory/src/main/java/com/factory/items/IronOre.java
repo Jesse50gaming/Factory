@@ -32,6 +32,11 @@ public class IronOre extends Item {
 
     }
 
+
+    @Override
+    public Item cloneItem(int amount) {
+        return new IronOre(gamePanel, amount);
+    }
     
 
 

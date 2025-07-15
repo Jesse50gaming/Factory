@@ -32,5 +32,10 @@ public class BasicMinerItem extends Item {
     public void update() {
     
     }
+    
+    @Override
+    public Item cloneItem(int amount) {
+        return new BasicMinerItem(gamePanel, amount);
+    }
 
 }

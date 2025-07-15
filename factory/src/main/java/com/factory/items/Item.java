@@ -1,5 +1,6 @@
 package com.factory.items;
 
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 import com.factory.GamePanel;
@@ -19,6 +20,7 @@ public class Item {
     public String name;
 
     public int worldX,worldY;
+    public int worldGroundCol,worldGroundRow;
 
     public int containerWidth;
     int groundHeight, groundWidth;
@@ -38,8 +40,8 @@ public class Item {
         maxStackSize = 100;
         containerHeight = 16;
         containerWidth = 16;
-        groundHeight = gamePanel.tileSize / 4;
-        groundWidth = gamePanel.tileSize / 4;
+        groundHeight = gamePanel.tileSize / 2;
+        groundWidth = gamePanel.tileSize / 2;
     }
 
     public void place() {
@@ -98,8 +100,47 @@ public class Item {
         return false;
     }
 
-    
+    public void paint (Graphics2D g2) {
+        
+        if (onFloor) {
+            int screenX = worldX - gamePanel.player.cameraX;
+            int screenY = worldY - gamePanel.player.cameraY;
 
-    
+            g2.drawImage(image,screenX,screenY,groundWidth,groundHeight, null);
+
+        }
+
+    }
+
+    public boolean onFloor() {
+        if (onFloor) return true;
+        return false;
+    }
+
+    public Item cloneItem(int amount) {
+        return new Item(gamePanel, amount);
+    }
+
+    public Item splitItem(int remove) {
+        int splitAmount = Math.min(remove, stackSize);
+        stackSize -= splitAmount;
+        return cloneItem(splitAmount);
+    }
+
+    public void putOnFloor(int x, int y) {
+
+        for (int i = 0; i < stackSize; i++) {
+            Item item = cloneItem(1);
+            item.worldX = x;
+            item.worldY = y;
+            item.onFloor = true;
+            gamePanel.addFloorItem(item);
+        }
+        stackSize = 0;
+    }
+
+    public void pickUp() {
+        onFloor = false;
+    }
 
 }

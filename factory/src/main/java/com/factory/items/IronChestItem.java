@@ -31,7 +31,16 @@ public class IronChestItem extends Item {
 
     @Override
     public void update() {
+        if (onFloor) {
+            System.out.println("x is " + worldX / gamePanel.tileSize);
+            System.out.println("y is " + worldY / gamePanel.tileSize);
+        }
+        
+    }
 
+    @Override
+    public Item cloneItem(int amount) {
+        return new IronChestItem(gamePanel, amount);
     }
 
 

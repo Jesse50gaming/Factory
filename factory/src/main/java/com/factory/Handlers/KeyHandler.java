@@ -7,12 +7,12 @@ public class KeyHandler implements KeyListener {
 
     public boolean wPressed;
     public boolean sPressed;
-	public boolean dPressed;
+    public boolean dPressed;
     public boolean aPressed;
     public boolean ePressed;
     public boolean escPressed;
-
-
+    public boolean zPressed;
+    public boolean fPressed;
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -39,8 +39,12 @@ public class KeyHandler implements KeyListener {
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
             escPressed = true;
         }
-        
-
+        if (e.getKeyCode() == KeyEvent.VK_Z) {
+            zPressed = true;
+        }
+        if (e.getKeyCode() == KeyEvent.VK_F) {
+            fPressed = true;
+        }
     }
 
     @Override
@@ -63,8 +67,11 @@ public class KeyHandler implements KeyListener {
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
             escPressed = false;
         }
-        
-
+        if (e.getKeyCode() == KeyEvent.VK_Z) {
+            zPressed = false;
+        }
+        if (e.getKeyCode() == KeyEvent.VK_F) {
+            fPressed = false;
+        }
     }
-
 }

@@ -184,6 +184,11 @@ public class ItemContainer extends GUI {
                 if (items[x][y].checkIfGone()) {
                     items[x][y] = null;
                 }
+
+                if (items[x][y].onFloor()) {
+                    
+                    
+                }
             }
         }
 
