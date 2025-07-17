@@ -37,6 +37,8 @@ public abstract class Item {
     
 
     public boolean rotateable;
+
+    public Direction moveDirection;
     
 
     public Item(GamePanel gamePanel, int numberOfItems) {

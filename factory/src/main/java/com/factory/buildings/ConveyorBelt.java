@@ -73,6 +73,7 @@ public class ConveyorBelt extends Building{
     }
 
     public void moveItems() {
+        
         int beltX = worldX;
         int beltY = worldY;
         int beltWidth = gamePanel.tileSize;
@@ -81,12 +82,23 @@ public class ConveyorBelt extends Building{
         for (Item item : gamePanel.floorItems) {
             int itemX = item.worldX;
             int itemY = item.worldY;
+            int itemWidth = item.tileWidth * gamePanel.tileSize;
+            int itemHeight = item.tileHeight * gamePanel.tileSize;
 
-            boolean withinX = itemX >= beltX && itemX < beltX + beltWidth;
-            boolean withinY = itemY >= beltY && itemY < beltY + beltHeight;
+            
+            int overlapX = Math.max(0, Math.min(itemX + itemWidth, beltX + beltWidth) - Math.max(itemX, beltX));
+            int overlapY = Math.max(0, Math.min(itemY + itemHeight, beltY + beltHeight) - Math.max(itemY, beltY));
+            boolean onEnough = false;
 
-            if (!(withinX && withinY)) continue;
-
+            if (item.moveDirection == direction) {
+                onEnough = overlapX > 0 && overlapY > 0;
+            } else {
+                onEnough = overlapX >= itemWidth && overlapY >= itemHeight;
+            }   
+            
+            if (!(onEnough)) continue;
+            
+            item.moveDirection = direction;
             item.move(direction, movingSpeed);
         }
     }
