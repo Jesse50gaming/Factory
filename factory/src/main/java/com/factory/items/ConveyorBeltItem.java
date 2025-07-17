@@ -39,7 +39,7 @@ public class ConveyorBeltItem extends Item {
 
     @Override
     public void update() {
-        
+        updateTile();
     }
 
 }

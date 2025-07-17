@@ -7,13 +7,14 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import com.factory.GamePanel;
+import com.factory.items.Item;
 import com.factory.util.Direction;
 
 
 public class ConveyorBelt extends Building{
 
     Direction direction;
-
+    int movingSpeed = 1; //how many pixels an item moves per frame
     BufferedImage image2;
 
 
@@ -28,6 +29,8 @@ public class ConveyorBelt extends Building{
     public void update() {
         screenX = worldX - gamePanel.player.cameraX;
         screenY = worldY - gamePanel.player.cameraY;
+        moveItems();
+        checkForDestruction();
     }
 
     @Override
@@ -67,6 +70,25 @@ public class ConveyorBelt extends Building{
         height = image.getHeight() * gamePanel.scale;
         item = com.factory.items.ConveyorBeltItem.class; 
         markTiles();
+    }
+
+    public void moveItems() {
+        int beltX = worldX;
+        int beltY = worldY;
+        int beltWidth = gamePanel.tileSize;
+        int beltHeight = gamePanel.tileSize;
+
+        for (Item item : gamePanel.floorItems) {
+            int itemX = item.worldX;
+            int itemY = item.worldY;
+
+            boolean withinX = itemX >= beltX && itemX < beltX + beltWidth;
+            boolean withinY = itemY >= beltY && itemY < beltY + beltHeight;
+
+            if (!(withinX && withinY)) continue;
+
+            item.move(direction, movingSpeed);
+        }
     }
 
 }

@@ -102,7 +102,7 @@ public class MouseHandler implements MouseListener {
                 Item dropItem = inHand.splitItem(1);
                 if (dropItem != null) {
                     dropItem.putOnFloor(mouseWorldX, mouseWorldY);
-                    dropCooldown = 15;
+                    dropCooldown = 10;
 
                     if (inHand.checkIfGone()) {
                         inHand = null;
@@ -125,6 +125,7 @@ public class MouseHandler implements MouseListener {
 
         rightClickUsed = false;
         leftClickUsed = false;
+        
     }
 
 

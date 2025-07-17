@@ -32,7 +32,7 @@ public class BasicMinerItem extends Item {
 
     @Override
     public void update() {
-    
+        updateTile();
     }
     
     @Override

@@ -146,6 +146,11 @@ public class GamePanel extends JPanel implements Runnable {
         for (Item item : itemsToRemove) {
             floorItems.remove(item);
         }
+
+        for (Item item : floorItems) {
+            item.update();
+        }
+        
         
         
         GUIHandler.update();

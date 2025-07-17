@@ -108,6 +108,15 @@ public abstract class Item {
         return false;
     }
 
+    public void updateTile() {
+        if (onFloor) {
+            worldGroundCol = (int) Math.floor(worldX/(gamePanel.tileSize/2));
+            worldGroundRow = (int) Math.floor(worldY/(gamePanel.tileSize/2));
+            
+        }
+        
+    }
+
     public void paint (Graphics2D g2) {
         
         if (onFloor) {
@@ -160,6 +169,18 @@ public abstract class Item {
 
     public void pickUp() {
         onFloor = false;
+    }
+
+
+    public void move(Direction direction,int magnitude) {
+        
+        switch (direction) {
+            case UP: worldY -= magnitude;break;
+            case DOWN: worldY += magnitude;break;
+            case RIGHT: worldX += magnitude;break;
+            case LEFT: worldX -= magnitude;break;    
+        }
+        
     }
 
     

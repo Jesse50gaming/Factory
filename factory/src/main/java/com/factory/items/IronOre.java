@@ -30,7 +30,7 @@ public class IronOre extends Item {
 
     @Override
     public void update() {
-
+        updateTile();
     }
 
 

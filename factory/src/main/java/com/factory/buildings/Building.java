@@ -45,23 +45,24 @@ public abstract class Building {
     public abstract void update();
 
     public void checkForDestruction() {
-    if (gamePanel.mouseHandler.rightClick && !gamePanel.mouseHandler.rightClickUsed) {
+        if (gamePanel.mouseHandler.rightClick && !gamePanel.mouseHandler.rightClickUsed) {
 
-        int mouseTileX = (int) Math.floor(gamePanel.mouseHandler.mouseWorldX / gamePanel.tileSize);
-        int mouseTileY = (int) Math.floor(gamePanel.mouseHandler.mouseWorldY / gamePanel.tileSize);
+            int mouseTileX = (int) Math.floor(gamePanel.mouseHandler.mouseWorldX / gamePanel.tileSize);
+            int mouseTileY = (int) Math.floor(gamePanel.mouseHandler.mouseWorldY / gamePanel.tileSize);
 
-        int buildingTileX = (int) Math.floor(worldX / gamePanel.tileSize);
-        int buildingTileY = (int) Math.floor(worldY / gamePanel.tileSize);
+            int buildingTileX = (int) Math.floor(worldX / gamePanel.tileSize);
+            int buildingTileY = (int) Math.floor(worldY / gamePanel.tileSize);
 
-        int tilesWide = width / gamePanel.tileSize;
-        int tilesHigh = height / gamePanel.tileSize;
-        if (mouseTileX >= buildingTileX && mouseTileX < buildingTileX + tilesWide && mouseTileY >= buildingTileY && mouseTileY < buildingTileY + tilesHigh) {
-            gamePanel.mouseHandler.rightClickUsed = true;
-            destroy(gamePanel.player.inventory);
-            
+            int tilesWide = width / gamePanel.tileSize;
+            int tilesHigh = height / gamePanel.tileSize;
+            if (mouseTileX >= buildingTileX && mouseTileX < buildingTileX + tilesWide && mouseTileY >= buildingTileY && mouseTileY < buildingTileY + tilesHigh) {
+                gamePanel.mouseHandler.rightClickUsed = true;
+                destroy(gamePanel.player.inventory);
+                
+            }
         }
+        
     }
-}
 
     
 

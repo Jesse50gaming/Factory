@@ -29,7 +29,7 @@ public class CopperOre extends Item {
 
     @Override
     public void update() {
-
+        updateTile();
     }
     @Override
     public Item cloneItem(int amount) {
