@@ -24,6 +24,7 @@ public class IronOre extends Item {
 
         maxStackSize = 100;
         placeable = false;
+        rotateable = false;
         
     }
 

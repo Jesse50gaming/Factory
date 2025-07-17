@@ -13,6 +13,7 @@ public class KeyHandler implements KeyListener {
     public boolean escPressed;
     public boolean zPressed;
     public boolean fPressed;
+    public boolean rPressed;
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -45,6 +46,9 @@ public class KeyHandler implements KeyListener {
         if (e.getKeyCode() == KeyEvent.VK_F) {
             fPressed = true;
         }
+        if (e.getKeyCode() == KeyEvent.VK_R) {
+            rPressed = true;
+        }
     }
 
     @Override
@@ -72,6 +76,9 @@ public class KeyHandler implements KeyListener {
         }
         if (e.getKeyCode() == KeyEvent.VK_F) {
             fPressed = false;
+        }
+        if (e.getKeyCode() == KeyEvent.VK_R) {
+            rPressed = false;
         }
     }
 }

@@ -13,6 +13,7 @@ import com.factory.GUI.ItemContainer;
 import com.factory.Handlers.KeyHandler;
 import com.factory.Handlers.MouseHandler;
 import com.factory.items.BasicMinerItem;
+import com.factory.items.ConveyorBeltItem;
 import com.factory.items.CopperOre;
 import com.factory.items.IronChestItem;
 import com.factory.items.IronOre;
@@ -74,6 +75,7 @@ public class Player extends Entity {
         inventory.add(new CopperOre(gamePanel, 5));
         inventory.add(new IronChestItem(gamePanel,5));
         inventory.add(new BasicMinerItem(gamePanel, 5));
+        inventory.add(new ConveyorBeltItem(gamePanel, 100));
         updateHitBox();
         
     }

@@ -6,20 +6,23 @@ import java.lang.reflect.InvocationTargetException;
 import com.factory.GamePanel;
 import com.factory.GUI.ItemContainer;
 import com.factory.items.Item;
+import com.factory.util.Direction;
 
-public class Building {
+public abstract class Building {
 
     public int worldX, worldY;
     public GamePanel gamePanel;
     public int screenX, screenY;
     public int width,height;
     public BufferedImage image;
+    Direction direction;
     Class<? extends Item> item;
     
-    public Building(GamePanel gamePanel, int worldX, int worldY) {
+    public Building(GamePanel gamePanel, int worldX, int worldY, Direction direction) {
         this.gamePanel = gamePanel;
         this.worldX = worldX;
         this.worldY = worldY;
+        this.direction = direction;
         setDefaults();
     }
 
@@ -39,9 +42,7 @@ public class Building {
     }
 
 
-    public void update() {
-
-    }
+    public abstract void update();
 
     public void checkForDestruction() {
     if (gamePanel.mouseHandler.rightClick && !gamePanel.mouseHandler.rightClickUsed) {
@@ -64,9 +65,7 @@ public class Building {
 
     
 
-    public void paint(Graphics2D g2) {
-
-    }
+    public abstract void paint(Graphics2D g2);
 
     public boolean destroy(ItemContainer inventory) {
 

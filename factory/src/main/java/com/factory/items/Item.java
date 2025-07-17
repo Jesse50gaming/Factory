@@ -2,16 +2,19 @@ package com.factory.items;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 
 import com.factory.GamePanel;
 import com.factory.buildings.Building;
+import com.factory.util.Direction;
 
 
-public class Item {
+public abstract class Item {
     GamePanel gamePanel;
 
     public BufferedImage image;
-    boolean placeable = false;
+    public boolean placeable = false;
     public int stackSize;
     int maxStackSize;
     public boolean onFloor;
@@ -24,9 +27,16 @@ public class Item {
 
     public int containerWidth;
     int groundHeight, groundWidth;
-    int tileWidth,tileHeight;
+    public int tileWidth;
+
+    public int tileHeight;
 
     Class<? extends Building> buildingType;
+
+    public String ghostPath;
+    
+
+    public boolean rotateable;
     
 
     public Item(GamePanel gamePanel, int numberOfItems) {
@@ -44,7 +54,7 @@ public class Item {
         groundWidth = gamePanel.tileSize / 2;
     }
 
-    public void place() {
+    public void place(Direction direction) {
 
         if(placeable) {
             boolean place = true;
@@ -67,7 +77,7 @@ public class Item {
                 int placeY = mouseTileWorldY * gamePanel.tileSize;
 
                 try {
-                    Building newBuilding = buildingType.getConstructor(GamePanel.class, int.class, int.class).newInstance(gamePanel, placeX, placeY);
+                    Building newBuilding = buildingType.getConstructor(GamePanel.class, int.class, int.class, Direction.class).newInstance(gamePanel, placeX, placeY,direction);
 
                     gamePanel.buildings.add(newBuilding);
                     checkIfGone();
@@ -89,9 +99,7 @@ public class Item {
         return false;
     }
 
-    public void update() {
-        
-    }
+    public abstract void update();
 
     public boolean checkIfGone() {
         if (stackSize < 1) {
@@ -117,9 +125,7 @@ public class Item {
         return false;
     }
 
-    public Item cloneItem(int amount) {
-        return new Item(gamePanel, amount);
-    }
+    public abstract Item cloneItem(int amount);
 
     public Item splitItem(int remove) {
         int splitAmount = Math.min(remove, stackSize);
@@ -139,8 +145,23 @@ public class Item {
         stackSize = 0;
     }
 
+    public BufferedImage getGhostImage() {
+
+        BufferedImage ghost;
+        try {
+            ghost = ImageIO.read(getClass().getResourceAsStream(ghostPath));
+            return ghost;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return image;
+
+    }
+
     public void pickUp() {
         onFloor = false;
     }
+
+    
 
 }

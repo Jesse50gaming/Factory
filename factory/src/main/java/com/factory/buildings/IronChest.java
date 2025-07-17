@@ -7,6 +7,7 @@ import javax.imageio.ImageIO;
 
 import com.factory.GamePanel;
 import com.factory.GUI.ItemContainer;
+import com.factory.util.Direction;
 
 public class IronChest extends Building {
 
@@ -15,8 +16,8 @@ public class IronChest extends Building {
     ItemContainer container;
     
 
-    public IronChest(GamePanel gamePanel, int x, int y) {
-        super(gamePanel,x,y);
+    public IronChest(GamePanel gamePanel, int x, int y,Direction direction) {
+        super(gamePanel,x,y, direction);
         setIndividualDefaults();
     }
 
@@ -25,7 +26,7 @@ public class IronChest extends Building {
 
         container = new ItemContainer(gamePanel, 5);
         try {
-            image = ImageIO.read(getClass().getResourceAsStream("/buildings/ironChest.png"));
+            image = ImageIO.read(getClass().getResourceAsStream("/buildings/ironChest/ironChest.png"));
         } catch (IOException e) {
            
             e.printStackTrace();

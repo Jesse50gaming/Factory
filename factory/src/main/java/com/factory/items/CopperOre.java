@@ -24,6 +24,7 @@ public class CopperOre extends Item {
 
         maxStackSize = 100;
         placeable = false;
+        rotateable = false;
     }
 
     @Override

@@ -14,6 +14,7 @@ public class BasicMinerItem extends Item {
 
     private void setIndividualDefaults() {
         placeable = true;
+        rotateable = false;
         name = "Basic Miner";
         tileHeight = 2;
         tileWidth = 2;
@@ -22,6 +23,7 @@ public class BasicMinerItem extends Item {
 
         try {
             image = ImageIO.read(getClass().getResourceAsStream("/items/basicMinerItem.png"));
+            ghostPath = "/ghostBuildings/basicMiner/basicMiner.png";
         } catch (IOException e) {
             e.printStackTrace();
         }

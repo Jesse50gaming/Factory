@@ -10,6 +10,7 @@ import javax.imageio.ImageIO;
 import com.factory.GamePanel;
 import com.factory.GUI.ItemContainer;
 import com.factory.items.Item;
+import com.factory.util.Direction;
 
 public class BasicMiner extends Building {
 
@@ -19,8 +20,8 @@ public class BasicMiner extends Building {
 
     ItemContainer container;
 
-    public BasicMiner(GamePanel gamePanel, int worldX, int worldY) {
-        super(gamePanel, worldX, worldY);
+    public BasicMiner(GamePanel gamePanel, int worldX, int worldY, Direction direction) {
+        super(gamePanel, worldX, worldY, direction);
         
         setIndividualDefaults();
     }
@@ -28,7 +29,7 @@ public class BasicMiner extends Building {
     private void setIndividualDefaults() {
     
         try {
-            image = ImageIO.read(getClass().getResourceAsStream("/buildings/basicMiner.png"));
+            image = ImageIO.read(getClass().getResourceAsStream("/buildings/basicMiner/basicMiner.png"));
         } catch (IOException e) {
             e.printStackTrace();
         } 

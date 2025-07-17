@@ -15,6 +15,7 @@ public class IronChestItem extends Item {
 
     private void setIndividualDefaults() {
         placeable = true;
+        rotateable = false;
         name = "Iron Chest";
         tileHeight = 1;
         tileWidth = 1;
@@ -23,6 +24,7 @@ public class IronChestItem extends Item {
 
         try {
             image = ImageIO.read(getClass().getResourceAsStream("/items/ironChest.png"));
+            ghostPath = "/ghostBuildings/ironChest/ironChest.png";
         } catch (IOException e) {
             e.printStackTrace();
         }

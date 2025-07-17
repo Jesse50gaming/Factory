@@ -60,6 +60,8 @@ public class GamePanel extends JPanel implements Runnable {
     
     public TileManager tileManager = new TileManager(this);
     CollisionChecker collisionChecker = new CollisionChecker(this);
+
+    public int animationCount = 0;
     
 
     //objects
@@ -124,6 +126,13 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     private void update() {
+
+        if (animationCount == 60) {
+            animationCount = 0;
+        } else {
+            animationCount++;
+        }
+
         player.update();
         
         for (Building building : buildings) {
