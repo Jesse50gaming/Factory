@@ -3,10 +3,12 @@ package com.factory.items;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+
 import javax.imageio.ImageIO;
 
 import com.factory.GamePanel;
 import com.factory.buildings.Building;
+import com.factory.buildings.ConveyorBelt;
 import com.factory.util.Direction;
 
 
@@ -26,7 +28,9 @@ public abstract class Item {
     public int worldGroundCol,worldGroundRow;
 
     public int containerWidth;
-    int groundHeight, groundWidth;
+    public int groundHeight;
+
+    public int groundWidth;
     public int tileWidth;
 
     public int tileHeight;
@@ -90,6 +94,24 @@ public abstract class Item {
         }
     }
 
+    public void checkAndAddToBelt() {
+        if (!onFloor) return;
+
+        // Find the tile the item is currently over
+        int tileX = worldX / gamePanel.tileSize;
+        int tileY = worldY / gamePanel.tileSize;
+
+        ConveyorBelt belt = gamePanel.getConveyorBeltAt(tileX, tileY);
+
+        if (belt != null) {
+            // Check if item is already tracked by belt to avoid duplicates
+            if (!belt.itemsOnBelt.contains(this)) {
+                belt.itemsOnBelt.add(this);
+                this.moveDirection = belt.direction; // optional, sync move dir
+            }
+        }
+    }
+
     public boolean merge(Item item) {
         
         
@@ -126,6 +148,8 @@ public abstract class Item {
             int screenY = worldY - gamePanel.player.cameraY;
 
             g2.drawImage(image,screenX,screenY,groundWidth,groundHeight, null);
+            
+
 
         }
 
@@ -174,15 +198,17 @@ public abstract class Item {
     }
 
 
-    public void move(Direction direction,int magnitude) {
-        
+    public void move(Direction direction, int magnitude) {
         switch (direction) {
-            case UP: worldY -= magnitude;break;
-            case DOWN: worldY += magnitude;break;
-            case RIGHT: worldX += magnitude;break;
-            case LEFT: worldX -= magnitude;break;    
+            case UP -> worldY -= magnitude;
+            case DOWN -> worldY += magnitude;
+            case LEFT -> worldX -= magnitude;
+            case RIGHT -> worldX += magnitude;
         }
-        
+
+        // Update which tile the item is in after moving
+        worldGroundCol = (int) Math.floor((double) worldX / gamePanel.tileSize);
+        worldGroundRow = (int) Math.floor((double) worldY / gamePanel.tileSize);
     }
 
     

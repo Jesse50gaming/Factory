@@ -30,6 +30,7 @@ public class CopperOre extends Item {
     @Override
     public void update() {
         updateTile();
+        checkAndAddToBelt();
     }
     @Override
     public Item cloneItem(int amount) {

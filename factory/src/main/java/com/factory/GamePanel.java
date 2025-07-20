@@ -18,8 +18,10 @@ import com.factory.Handlers.GUIHandler;
 import com.factory.Handlers.KeyHandler;
 import com.factory.Handlers.MouseHandler;
 import com.factory.buildings.Building;
+import com.factory.buildings.ConveyorBelt;
 import com.factory.items.Item;
 import com.factory.tile.TileManager;
+import com.factory.util.Direction;
 
 
 
@@ -174,7 +176,10 @@ public class GamePanel extends JPanel implements Runnable {
 
         for (Item item : floorItems) {
             item.paint(g2);
+            
         }
+
+        
 
         player.paint(g2);
         mouseHandler.draw(g2);
@@ -233,6 +238,48 @@ public class GamePanel extends JPanel implements Runnable {
         hasItem[item.worldGroundCol][item.worldGroundRow] = false;
         item.pickUp();
         itemsToRemove.add(item);
+    }
+
+    public ConveyorBelt getConveyorBeltAtNextPosition(int x, int y, Direction dir) {
+        
+        int nextX = x;
+        int nextY = y;
+
+        switch (dir) {
+            case LEFT -> nextX = x - tileSize;  // or width of one belt tile
+            case RIGHT -> nextX = x + tileSize;
+            case UP -> nextY = y - tileSize;
+            case DOWN -> nextY = y + tileSize;
+        }
+
+        // find next belt
+        for (Building building : buildings) {
+            if (building instanceof ConveyorBelt) {
+                ConveyorBelt belt = (ConveyorBelt) building;
+                if (belt.worldX == nextX && belt.worldY == nextY) {
+                    return belt;
+                }
+            }
+        }
+
+        return null;  // no found conveyor belt
+    }
+
+    public ConveyorBelt getConveyorBeltAt(int tileX, int tileY) {
+        int worldX = tileX * tileSize;
+        int worldY = tileY * tileSize;
+
+        for (Building building : buildings) {
+            if (building instanceof ConveyorBelt) {
+                ConveyorBelt belt = (ConveyorBelt) building;
+                // Check if (worldX, worldY) is inside the bounds of this belt
+                if (worldX >= belt.worldX && worldX < belt.worldX + belt.width &&
+                    worldY >= belt.worldY && worldY < belt.worldY + belt.height) {
+                    return belt;
+                }
+            }
+        }
+        return null;
     }
 
 

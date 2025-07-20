@@ -35,6 +35,7 @@ public class IronChestItem extends Item {
     public void update() {
         
         updateTile();
+        checkAndAddToBelt();
     }
 
     @Override
