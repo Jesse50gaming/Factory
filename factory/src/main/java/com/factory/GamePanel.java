@@ -282,6 +282,14 @@ public class GamePanel extends JPanel implements Runnable {
         return null;
     }
 
+    public void removeItemFromAllBelts(Item item) {
+        for (Building building : buildings) {
+            if (building instanceof ConveyorBelt belt) {
+                belt.itemsOnBelt.remove(item);
+            }
+        }
+    }
+
 
 
     public static void fullScreen() {

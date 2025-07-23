@@ -97,17 +97,17 @@ public abstract class Item {
     public void checkAndAddToBelt() {
         if (!onFloor) return;
 
-        // Find the tile the item is currently over
+        
         int tileX = worldX / gamePanel.tileSize;
         int tileY = worldY / gamePanel.tileSize;
 
         ConveyorBelt belt = gamePanel.getConveyorBeltAt(tileX, tileY);
 
         if (belt != null) {
-            // Check if item is already tracked by belt to avoid duplicates
+            // no dupes
             if (!belt.itemsOnBelt.contains(this)) {
                 belt.itemsOnBelt.add(this);
-                this.moveDirection = belt.direction; // optional, sync move dir
+                this.moveDirection = belt.direction; 
             }
         }
     }

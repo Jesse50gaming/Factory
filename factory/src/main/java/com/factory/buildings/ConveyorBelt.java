@@ -76,9 +76,9 @@ public class ConveyorBelt extends Building {
     public void moveItems() {
         if (itemsOnBelt == null) return;
 
-        // Make a copy to avoid concurrent modification while removing items
+        // make copy to avoid error
         for (Item item : new ArrayList<>(itemsOnBelt)) {
-            // Move item based on conveyor direction
+            // move based on direciton
             switch (direction) {
                 case LEFT -> item.worldX -= movingSpeed;
                 case RIGHT -> item.worldX += movingSpeed;
@@ -86,46 +86,77 @@ public class ConveyorBelt extends Building {
                 case DOWN -> item.worldY += movingSpeed;
             }
 
-            // Check if item reached the end of the belt
+            
             boolean reachedEnd = switch (direction) {
-                case LEFT -> item.worldX <= worldX;
-                case RIGHT -> item.worldX + item.groundWidth >= worldX + width;
-                case UP -> item.worldY <= worldY;
-                case DOWN -> item.worldY + item.groundHeight >= worldY + height;
+                case LEFT -> item.worldX + item.groundWidth <= worldX;
+                case RIGHT -> item.worldX >= worldX + width;
+                case UP -> item.worldY + item.groundHeight <= worldY;
+                case DOWN -> item.worldY >= worldY + height;
             };
-
+            
             if (reachedEnd) {
                 ConveyorBelt nextBelt = gamePanel.getConveyorBeltAtNextPosition(worldX, worldY, direction);
                 if (nextBelt != null) {
-                    // Remove item from current belt
-                    itemsOnBelt.remove(item);
+                    
+                    gamePanel.removeItemFromAllBelts(item);
 
-                    // Place item at start of next belt depending on direction
+                    //put at start of next belt
+                     
                     switch (direction) {
                         case LEFT -> item.worldX = nextBelt.worldX + nextBelt.width - item.groundWidth;
                         case RIGHT -> item.worldX = nextBelt.worldX;
                         case UP -> item.worldY = nextBelt.worldY + nextBelt.height - item.groundHeight;
                         case DOWN -> item.worldY = nextBelt.worldY;
                     }
-
-                    // Add item to next belt
+                    
+                    
                     nextBelt.itemsOnBelt.add(item);
                 } else {
-                    // clamp if no other belt
+                    // clamp to end of the belt 
                     clampItemToBelt(item);
                 }
             } else {
-                //clamp otherwise
                 clampItemToBelt(item);
             }
         }
     }
 
     private void clampItemToBelt(Item item) {
-        if (item.worldX < worldX) item.worldX = worldX;
-        if (item.worldX + item.groundWidth > worldX + width) item.worldX = worldX + width - item.groundWidth;
-        if (item.worldY < worldY) item.worldY = worldY;
-        if (item.worldY + item.groundHeight > worldY + height) item.worldY = worldY + height - item.groundHeight;
+
+        switch (direction) {
+            case UP:
+                if (item.worldX < worldX) {
+                    item.worldX = worldX;
+                } 
+                if (item.worldX + item.groundWidth > worldX + width) {
+                    item.worldX = worldX + width - item.groundWidth;
+                }
+            break;
+            case DOWN:
+                if (item.worldX < worldX) {
+                    item.worldX = worldX;
+                } 
+                if (item.worldX + item.groundWidth > worldX + width) {
+                    item.worldX = worldX + width - item.groundWidth;
+                }
+            break;
+            case RIGHT:
+                if (item.worldY < worldY) {
+                    item.worldY = worldY;
+                }
+                if (item.worldY + item.groundHeight > worldY + height) {
+                    item.worldY = worldY + height - item.groundHeight;
+                }
+            break;
+            case LEFT:
+                if (item.worldY < worldY) {
+                    item.worldY = worldY;
+                }
+                if (item.worldY + item.groundHeight > worldY + height) {
+                    item.worldY = worldY + height - item.groundHeight;
+                }
+            break;
+        }
     }
 
     public void addItem(Item item) {
