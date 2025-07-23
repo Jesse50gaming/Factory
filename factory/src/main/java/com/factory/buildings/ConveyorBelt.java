@@ -112,7 +112,7 @@ public class ConveyorBelt extends Building {
                     
                     nextBelt.itemsOnBelt.add(item);
                 } else {
-                    // clamp to end of the belt 
+                    
                     clampItemToBelt(item);
                 }
             } else {
@@ -122,41 +122,58 @@ public class ConveyorBelt extends Building {
     }
 
     private void clampItemToBelt(Item item) {
+        ConveyorBelt nextBelt = gamePanel.getConveyorBeltAtNextPosition(worldX, worldY, direction);
 
-        switch (direction) {
-            case UP:
-                if (item.worldX < worldX) {
-                    item.worldX = worldX;
-                } 
-                if (item.worldX + item.groundWidth > worldX + width) {
-                    item.worldX = worldX + width - item.groundWidth;
-                }
-            break;
-            case DOWN:
-                if (item.worldX < worldX) {
-                    item.worldX = worldX;
-                } 
-                if (item.worldX + item.groundWidth > worldX + width) {
-                    item.worldX = worldX + width - item.groundWidth;
-                }
-            break;
-            case RIGHT:
-                if (item.worldY < worldY) {
-                    item.worldY = worldY;
-                }
-                if (item.worldY + item.groundHeight > worldY + height) {
-                    item.worldY = worldY + height - item.groundHeight;
-                }
-            break;
-            case LEFT:
-                if (item.worldY < worldY) {
-                    item.worldY = worldY;
-                }
-                if (item.worldY + item.groundHeight > worldY + height) {
-                    item.worldY = worldY + height - item.groundHeight;
-                }
-            break;
+        if (nextBelt != null) {
+            switch (direction) {
+                case UP:
+                    if (item.worldX < worldX) {
+                        item.worldX = worldX;
+                    } 
+                    if (item.worldX + item.groundWidth > worldX + width) {
+                        item.worldX = worldX + width - item.groundWidth;
+                    }
+                break;
+                case DOWN:
+                    if (item.worldX < worldX) {
+                        item.worldX = worldX;
+                    } 
+                    if (item.worldX + item.groundWidth > worldX + width) {
+                        item.worldX = worldX + width - item.groundWidth;
+                    }
+                break;
+                case RIGHT:
+                    if (item.worldY < worldY) {
+                        item.worldY = worldY;
+                    }
+                    if (item.worldY + item.groundHeight > worldY + height) {
+                        item.worldY = worldY + height - item.groundHeight;
+                    }
+                break;
+                case LEFT:
+                    if (item.worldY < worldY) {
+                        item.worldY = worldY;
+                    }
+                    if (item.worldY + item.groundHeight > worldY + height) {
+                        item.worldY = worldY + height - item.groundHeight;
+                    }
+                break;
+            }
+        } else{
+            if (item.worldX < worldX) {
+                item.worldX = worldX;
+            } 
+            if (item.worldX + item.groundWidth > worldX + width) {
+                item.worldX = worldX + width - item.groundWidth;
+            }
+            if (item.worldY < worldY) {
+                item.worldY = worldY;
+            }
+            if (item.worldY + item.groundHeight > worldY + height) {
+                item.worldY = worldY + height - item.groundHeight;
+            }
         }
+        
     }
 
     public void addItem(Item item) {
