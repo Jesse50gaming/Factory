@@ -91,9 +91,9 @@ public class MouseHandler implements MouseListener {
                 rotateCooldown = 15;
             }
 
-            if (leftClick && !leftClickUsed) {
+            if (leftDown && !leftClickUsed) {
                 inHand.place(placeDirection);
-                useLeft(); 
+                 
             }
         }
 

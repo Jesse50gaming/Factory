@@ -101,7 +101,7 @@ public class ConveyorBelt extends Building {
                     gamePanel.removeItemFromAllBelts(item);
 
                     //put at start of next belt
-                     
+                    
                     switch (direction) {
                         case LEFT -> item.worldX = nextBelt.worldX + nextBelt.width - item.groundWidth;
                         case RIGHT -> item.worldX = nextBelt.worldX;
