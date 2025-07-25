@@ -195,6 +195,7 @@ public abstract class Item {
 
     public void pickUp() {
         onFloor = false;
+        gamePanel.removeItemFromAllBelts(this);
     }
 
 
@@ -206,9 +207,7 @@ public abstract class Item {
             case RIGHT -> worldX += magnitude;
         }
 
-        // Update which tile the item is in after moving
-        worldGroundCol = (int) Math.floor((double) worldX / gamePanel.tileSize);
-        worldGroundRow = (int) Math.floor((double) worldY / gamePanel.tileSize);
+        
     }
 
     

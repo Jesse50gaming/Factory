@@ -17,6 +17,7 @@ public abstract class Building {
     public BufferedImage image;
     Direction direction;
     Class<? extends Item> item;
+    boolean destroyed = false;
     
     public Building(GamePanel gamePanel, int worldX, int worldY, Direction direction) {
         this.gamePanel = gamePanel;
@@ -45,7 +46,7 @@ public abstract class Building {
     public abstract void update();
 
     public void checkForDestruction() {
-        if (gamePanel.mouseHandler.rightClick && !gamePanel.mouseHandler.rightClickUsed) {
+        if (gamePanel.mouseHandler.rightDown && !gamePanel.mouseHandler.rightClickUsed && !destroyed) {
 
             int mouseTileX = (int) Math.floor(gamePanel.mouseHandler.mouseWorldX / gamePanel.tileSize);
             int mouseTileY = (int) Math.floor(gamePanel.mouseHandler.mouseWorldY / gamePanel.tileSize);
@@ -56,10 +57,11 @@ public abstract class Building {
             int tilesWide = width / gamePanel.tileSize;
             int tilesHigh = height / gamePanel.tileSize;
             if (mouseTileX >= buildingTileX && mouseTileX < buildingTileX + tilesWide && mouseTileY >= buildingTileY && mouseTileY < buildingTileY + tilesHigh) {
-                gamePanel.mouseHandler.rightClickUsed = true;
+                gamePanel.mouseHandler.useRight();
                 destroy(gamePanel.player.inventory);
                 
             }
+            
         }
         
     }
@@ -69,7 +71,7 @@ public abstract class Building {
     public abstract void paint(Graphics2D g2);
 
     public boolean destroy(ItemContainer inventory) {
-
+        destroyed = true;
         Item newItem;
         try {
             newItem = item.getConstructor(GamePanel.class, int.class).newInstance(gamePanel,1);

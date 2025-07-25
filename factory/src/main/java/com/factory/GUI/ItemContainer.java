@@ -15,9 +15,9 @@ public class ItemContainer extends GUI {
     int height,width;
     BufferedImage topImage, middleImage,bottomImage;
     Item[][] items;
-    int screenX, screenY;
+    
     int closeTimer;
-    int pixelWidth;
+    
     int grabCooldown = 30;
 
 
@@ -33,6 +33,8 @@ public class ItemContainer extends GUI {
         screenX = 100;
         screenY = 100;
         pixelWidth = 138 * gamePanel.scale;
+        
+
         open = false;
         items = new Item[width][height];
         try {
@@ -42,6 +44,7 @@ public class ItemContainer extends GUI {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        pixelHeight = (topImage.getHeight() + middleImage.getHeight() * (height -1)  + bottomImage.getHeight()) * gamePanel.scale;
 
         
     }

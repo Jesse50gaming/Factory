@@ -8,6 +8,8 @@ public class GUI {
 
     GamePanel gamePanel;
     public boolean open;
+    int screenX, screenY;
+    int pixelWidth, pixelHeight;
 
     public GUI(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
@@ -24,6 +26,21 @@ public class GUI {
 
     public void close() {
         open = false;
+    }
+
+
+    public boolean mouseIsOver() {
+        if (open) {
+            boolean mouseOver;
+            int mouseX = gamePanel.mouseHandler.mouseScreenX;
+            int mouseY = gamePanel.mouseHandler.mouseScreenY;
+
+            mouseOver = mouseX >= screenX && mouseX <= screenX + pixelWidth && mouseY >= screenY && mouseY <= screenY + pixelHeight;
+
+            
+            return mouseOver;
+        }
+        return false;
     }
 
 }

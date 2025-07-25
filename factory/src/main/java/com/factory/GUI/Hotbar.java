@@ -12,14 +12,14 @@ import com.factory.GamePanel;
 import com.factory.Player;
 import com.factory.items.Item;
 
-public class Hotbar {
+public class Hotbar extends GUI {
 
-    GamePanel gamePanel;
+
     public Player player;
 
     int width;
-    int screenX, screenY;
-    int pixelWidth;
+    
+    
     int grabCooldown = 30;
     int height;
 
@@ -27,10 +27,12 @@ public class Hotbar {
     String[] hotbarSlots;
 
     public Hotbar(GamePanel gamePanel, int height, Player player) {
-        this.gamePanel = gamePanel;
+        super(gamePanel);
+        
         this.player = player;
         this.width = 8;
         this.height = height;
+        open = true;
 
         hotbarSlots = new String[width * height];
         pixelWidth = 138 * gamePanel.scale;
@@ -43,6 +45,18 @@ public class Hotbar {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        pixelHeight = (middleImage.getHeight() * (height - 1) + bottomImage.getHeight()) * gamePanel.scale;
+    }
+
+    @Override
+    public boolean mouseIsOver() {
+        boolean mouseOver;
+        int mouseX = gamePanel.mouseHandler.mouseScreenX;
+        int mouseY = gamePanel.mouseHandler.mouseScreenY;
+
+        mouseOver = mouseX >= screenX && mouseX <= screenX + pixelWidth && mouseY >= screenY && mouseY <= screenY + pixelHeight;
+        return mouseOver;
     }
 
     public void draw(Graphics2D g2) {

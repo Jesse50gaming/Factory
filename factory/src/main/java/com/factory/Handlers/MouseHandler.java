@@ -6,6 +6,7 @@ import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import com.factory.GamePanel;
+import com.factory.GUI.GUI;
 import com.factory.GUI.Hotbar;
 import com.factory.GUI.ItemContainer;
 import com.factory.items.Item;
@@ -92,8 +93,20 @@ public class MouseHandler implements MouseListener {
             }
 
             if (leftDown && !leftClickUsed) {
-                inHand.place(placeDirection);
-                 
+                boolean mouseOverGUI = false;
+                for (GUI gui: gamePanel.GUIHandler.GUIList) {
+                    if (gui.mouseIsOver()) {
+                        mouseOverGUI = true;
+                        
+                        break;
+                    }
+                }
+                
+                if(!mouseOverGUI) {
+                    inHand.place(placeDirection);
+                    
+                    useLeft();
+                }
             }
         }
 

@@ -66,7 +66,7 @@ public class Player extends Entity {
         health = 100;
         maxHealth = 100;
         damage = 10;
-        pickUpRange = 2;
+        pickUpRange = 3;
         inventory = new ItemContainer(gamePanel, 10);
         hotbar = new Hotbar(gamePanel, 2,this);
         
@@ -211,8 +211,8 @@ public class Player extends Entity {
 
     public void pickUpItems() {
 
-        int startCol = worldX / (gamePanel.tileSize / 2);
-        int startRow = worldY / (gamePanel.tileSize / 2);
+        int startCol = worldX / (gamePanel.tileSize / 2) - 1;
+        int startRow = worldY / (gamePanel.tileSize / 2) - 1;
 
         for (int x = 0; x < pickUpRange; x++) {
             for (int y = 0; y < pickUpRange; y++) {

@@ -273,8 +273,7 @@ public class GamePanel extends JPanel implements Runnable {
             if (building instanceof ConveyorBelt) {
                 ConveyorBelt belt = (ConveyorBelt) building;
                 // Check if (worldX, worldY) is inside the bounds of this belt
-                if (worldX >= belt.worldX && worldX < belt.worldX + belt.width &&
-                    worldY >= belt.worldY && worldY < belt.worldY + belt.height) {
+                if (worldX >= belt.worldX && worldX < belt.worldX + belt.width && worldY >= belt.worldY && worldY < belt.worldY + belt.height) {
                     return belt;
                 }
             }
