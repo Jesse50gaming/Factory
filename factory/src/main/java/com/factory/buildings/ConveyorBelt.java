@@ -17,13 +17,14 @@ public class ConveyorBelt extends Building {
     public Direction direction;
     int movingSpeed = 1; // how many pixels an item moves per frame
     BufferedImage image2;
-    public List<Item> itemsOnBelt;  // Make sure this is initialized somewhere!
+    public List<Item> itemsOnBelt; 
+    public Direction turnDirection; 
 
     public ConveyorBelt(GamePanel gamePanel, int worldX, int worldY, Direction direction) {
         super(gamePanel, worldX, worldY, direction);
         this.direction = direction;
 
-        itemsOnBelt = new ArrayList<>();  // initialize list to avoid NullPointerException
+        itemsOnBelt = new ArrayList<>();  
         setIndividualDefaults();
     }
 
@@ -61,8 +62,18 @@ public class ConveyorBelt extends Building {
 
     private void setIndividualDefaults() {
         try {
-            image = ImageIO.read(getClass().getResourceAsStream("/buildings/conveyorBelt/conveyorBelt_1.png"));
-            image2 = ImageIO.read(getClass().getResourceAsStream("/buildings/conveyorBelt/conveyorBelt_2.png"));
+            if (turnDirection == Direction.LEFT) {
+                image = ImageIO.read(getClass().getResourceAsStream("/buildings/conveyorBelt/conveyorBeltLeftTurn_1.png"));
+                image2 = ImageIO.read(getClass().getResourceAsStream("/buildings/conveyorBelt/conveyorBeltLeftTurn_2.png"));
+            }
+            else if(turnDirection == Direction.RIGHT) {
+                image = ImageIO.read(getClass().getResourceAsStream("/buildings/conveyorBelt/conveyorBeltRightTurn_1.png"));
+                image2 = ImageIO.read(getClass().getResourceAsStream("/buildings/conveyorBelt/conveyorBeltRightTurn_2.png"));
+            } else {
+                image = ImageIO.read(getClass().getResourceAsStream("/buildings/conveyorBelt/conveyorBelt_1.png"));
+                image2 = ImageIO.read(getClass().getResourceAsStream("/buildings/conveyorBelt/conveyorBelt_2.png"));
+            }
+            
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -71,6 +82,25 @@ public class ConveyorBelt extends Building {
         height = image.getHeight() * gamePanel.scale;
         item = com.factory.items.ConveyorBeltItem.class;
         markTiles();
+    }
+
+    public void updateTexture() {
+        try {
+            if (turnDirection == Direction.LEFT) {
+                image = ImageIO.read(getClass().getResourceAsStream("/buildings/conveyorBelt/conveyorBeltLeftTurn_1.png"));
+                image2 = ImageIO.read(getClass().getResourceAsStream("/buildings/conveyorBelt/conveyorBeltLeftTurn_2.png"));
+            }
+            else if(turnDirection == Direction.RIGHT) {
+                image = ImageIO.read(getClass().getResourceAsStream("/buildings/conveyorBelt/conveyorBeltRightTurn_1.png"));
+                image2 = ImageIO.read(getClass().getResourceAsStream("/buildings/conveyorBelt/conveyorBeltRightTurn_2.png"));
+            } else {
+                image = ImageIO.read(getClass().getResourceAsStream("/buildings/conveyorBelt/conveyorBelt_1.png"));
+                image2 = ImageIO.read(getClass().getResourceAsStream("/buildings/conveyorBelt/conveyorBelt_2.png"));
+            }
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void moveItems() {
