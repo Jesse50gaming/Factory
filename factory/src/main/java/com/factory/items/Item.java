@@ -141,6 +141,10 @@ public abstract class Item {
         
     }
 
+    public void uniquePlace(Direction placeDirection, Direction turnDirection) {
+        System.out.println("no unique place");
+    }
+
     public void paint (Graphics2D g2) {
         
         if (onFloor) {

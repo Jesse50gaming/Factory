@@ -9,6 +9,7 @@ import com.factory.GamePanel;
 import com.factory.GUI.GUI;
 import com.factory.GUI.Hotbar;
 import com.factory.GUI.ItemContainer;
+import com.factory.items.ConveyorBeltItem;
 import com.factory.items.Item;
 import com.factory.util.Direction;
 
@@ -34,8 +35,10 @@ public class MouseHandler implements MouseListener {
     public int rotateCooldown = 0;
 
     public Direction placeDirection = Direction.UP;
-
+    public Direction turnDirection = Direction.UP;
     public BufferedImage placeGhost;
+
+    int rotateNum = 0;
     
 
     public MouseHandler(GamePanel gamePanel) {
@@ -87,11 +90,62 @@ public class MouseHandler implements MouseListener {
         if (rotateCooldown > 0) rotateCooldown--;
 
         if (itemInHand && inHand.placeable) {
+
+
+            // objects to compare to
+            ConveyorBeltItem belt = new ConveyorBeltItem(gamePanel,1);
+
+            //rotate
             if (gamePanel.keyHandler.rPressed && rotateCooldown == 0) {
-                placeDirection = placeDirection.rotate();
+
+                if (inHand.getClass() == belt.getClass()) {
+                    if (rotateNum % 12 == 0) {
+                        turnDirection = Direction.UP;
+                        placeDirection = Direction.UP;
+                    } else if (rotateNum % 12 == 1) {
+                        placeDirection = Direction.UP;
+                        turnDirection = Direction.RIGHT;
+                    }else if (rotateNum % 12 == 2) {
+                        placeDirection = Direction.UP;
+                        turnDirection = Direction.LEFT;
+                    }else if (rotateNum % 12 == 3) {
+                        placeDirection = Direction.RIGHT;
+                        turnDirection = Direction.UP;
+                    }else if (rotateNum % 12 == 4) {
+                        placeDirection = Direction.RIGHT;
+                        turnDirection = Direction.RIGHT;
+                    }else if (rotateNum % 12 == 5) {
+                        placeDirection = Direction.RIGHT;
+                        turnDirection = Direction.LEFT;
+                    }else if (rotateNum % 12 == 6) {
+                        placeDirection = Direction.DOWN;
+                        turnDirection = Direction.UP;
+                    }else if (rotateNum % 12 == 7) {
+                        placeDirection = Direction.DOWN;
+                        turnDirection = Direction.RIGHT;
+                    } else if (rotateNum % 12 == 8) {
+                        placeDirection = Direction.DOWN;
+                        turnDirection = Direction.LEFT;
+                    }else if (rotateNum % 12 == 9) {
+                        placeDirection = Direction.LEFT;
+                        turnDirection = Direction.UP;
+                    }else if (rotateNum % 12 == 10) {
+                        placeDirection = Direction.LEFT;
+                        turnDirection = Direction.RIGHT;
+                    }else if (rotateNum % 12 == 11) {
+                        placeDirection = Direction.LEFT;
+                        turnDirection = Direction.LEFT;
+                    }
+                    rotateNum++;
+
+                } else {
+                    placeDirection = placeDirection.rotate();
+                    
+                }
                 rotateCooldown = 15;
             }
 
+            //should it be placed
             if (leftDown && !leftClickUsed) {
                 boolean mouseOverGUI = false;
                 for (GUI gui: gamePanel.GUIHandler.GUIList) {
@@ -103,7 +157,16 @@ public class MouseHandler implements MouseListener {
                 }
                 
                 if(!mouseOverGUI) {
-                    inHand.place(placeDirection);
+                    
+
+                    // place
+                    if (inHand.getClass() == belt.getClass()) {
+                        inHand.uniquePlace(placeDirection, turnDirection);  
+                        
+                    } else {
+                        inHand.place(placeDirection);
+                    }
+                    
                     
                     useLeft();
                 }
@@ -145,6 +208,7 @@ public class MouseHandler implements MouseListener {
 
     public void draw(Graphics2D g2) {
         if (itemInHand && inHand != null) {
+
             g2.drawImage(inHand.image, mouseScreenX, mouseScreenY,inHand.containerWidth * gamePanel.scale,inHand.containerHeight * gamePanel.scale, null);
 
             Font font = new Font("TIMES NEW ROMAN", Font.BOLD, 10 * gamePanel.scale);
@@ -163,6 +227,7 @@ public class MouseHandler implements MouseListener {
                 int screenY = ghostWorldY - gamePanel.player.cameraY;
 
                 BufferedImage ghostImage = inHand.getGhostImage();
+
                 AffineTransform old = g2.getTransform();
                 if (ghostImage != null) {
                     int drawWidth = inHand.tileWidth * gamePanel.tileSize;
