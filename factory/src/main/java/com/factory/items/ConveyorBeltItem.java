@@ -85,6 +85,40 @@ public class ConveyorBeltItem extends Item {
     }
 
     @Override
+    public void rotate(int worldX, int worldY, Direction placeDirection, Direction turnDirection) {
+        boolean beltUp = false, beltDown = false, beltRight = false, beltLeft = false;
+
+        Direction lastPlaceDirection = gamePanel.mouseHandler.lastPlaceDirection;
+
+        if (gamePanel.getConveyorBeltAtNextPosition(worldX, worldY, Direction.UP) != null) beltUp = true;
+        if (gamePanel.getConveyorBeltAtNextPosition(worldX, worldY, Direction.LEFT) != null) beltLeft = true;
+        if (gamePanel.getConveyorBeltAtNextPosition(worldX, worldY, Direction.DOWN) != null) beltDown = true;
+        if (gamePanel.getConveyorBeltAtNextPosition(worldX, worldY, Direction.RIGHT) != null) beltRight = true;
+
+        if (!beltUp && !beltDown && !beltLeft && !beltRight) {
+            turnDirection = Direction.DOWN;
+            placeDirection = placeDirection.rotate();
+        }
+
+        if (gamePanel.getConveyorBeltAtNextPosition(worldX, worldY, lastPlaceDirection.opposite()) != null) {
+            if (lastPlaceDirection == Direction.UP) {
+                
+            } else if (lastPlaceDirection == Direction.LEFT) {
+
+            } else if (lastPlaceDirection == Direction.DOWN) {
+                
+            } else if (lastPlaceDirection == Direction.RIGHT) {
+                
+            }
+        }
+
+
+
+        gamePanel.mouseHandler.placeDirection = placeDirection;
+        gamePanel.mouseHandler.turnDirection = turnDirection;
+    }
+
+    @Override
     public BufferedImage getGhostImage() {
         BufferedImage ghost;
 

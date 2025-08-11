@@ -38,6 +38,8 @@ public class MouseHandler implements MouseListener {
     public Direction turnDirection = Direction.UP;
     public BufferedImage placeGhost;
 
+    public Direction lastPlaceDirection;
+
     int rotateNum = 0;
     
 
@@ -97,8 +99,13 @@ public class MouseHandler implements MouseListener {
 
             //rotate
             if (gamePanel.keyHandler.rPressed && rotateCooldown == 0) {
+                rotateNum++;
 
+                
                 if (inHand.getClass() == belt.getClass()) {
+
+                    inHand.rotate(mouseWorldX,mouseWorldY, placeDirection, turnDirection);
+                    /* 
                     if (rotateNum % 12 == 0) {
                         turnDirection = Direction.UP;
                         placeDirection = Direction.UP;
@@ -136,7 +143,7 @@ public class MouseHandler implements MouseListener {
                         placeDirection = Direction.LEFT;
                         turnDirection = Direction.LEFT;
                     }
-                    rotateNum++;
+                    */
 
                 } else {
                     placeDirection = placeDirection.rotate();
@@ -162,12 +169,12 @@ public class MouseHandler implements MouseListener {
                     // place
                     if (inHand.getClass() == belt.getClass()) {
                         inHand.uniquePlace(placeDirection, turnDirection);  
-                        
+                       
                     } else {
                         inHand.place(placeDirection);
                     }
                     
-                    
+                    lastPlaceDirection = placeDirection;
                     useLeft();
                 }
             }

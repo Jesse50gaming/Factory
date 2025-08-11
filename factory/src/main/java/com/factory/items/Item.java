@@ -214,6 +214,10 @@ public abstract class Item {
         
     }
 
+    public void rotate(int worldX, int worldY, Direction placeDirection, Direction turnDirection) {
+        throw new UnsupportedOperationException("Unimplemented method 'rotate'");
+    }
+
     
 
 }
