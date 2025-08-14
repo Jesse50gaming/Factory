@@ -84,4 +84,9 @@ public abstract class Building {
         return false;
     }
 
+
+    public void updateTexture() {
+        
+    }
+
 }

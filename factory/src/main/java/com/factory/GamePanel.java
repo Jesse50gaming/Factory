@@ -251,12 +251,14 @@ public class GamePanel extends JPanel implements Runnable {
             case UP -> nextY = y - tileSize;
             case DOWN -> nextY = y + tileSize;
         }
-
+        
         // find next belt
         for (Building building : buildings) {
             if (building instanceof ConveyorBelt) {
                 ConveyorBelt belt = (ConveyorBelt) building;
+                
                 if (belt.worldX == nextX && belt.worldY == nextY) {
+                    
                     return belt;
                 }
             }

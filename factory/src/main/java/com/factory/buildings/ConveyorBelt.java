@@ -20,9 +20,10 @@ public class ConveyorBelt extends Building {
     public List<Item> itemsOnBelt; 
     public Direction turnDirection; 
 
-    public ConveyorBelt(GamePanel gamePanel, int worldX, int worldY, Direction direction) {
+    public ConveyorBelt(GamePanel gamePanel, int worldX, int worldY, Direction direction,Direction turnDirection) {
         super(gamePanel, worldX, worldY, direction);
         this.direction = direction;
+        this.turnDirection = turnDirection;
 
         itemsOnBelt = new ArrayList<>();  
         setIndividualDefaults();

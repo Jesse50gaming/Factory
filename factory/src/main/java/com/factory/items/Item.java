@@ -141,8 +141,9 @@ public abstract class Item {
         
     }
 
-    public void uniquePlace(Direction placeDirection, Direction turnDirection) {
+    public Building uniquePlace(Direction placeDirection, Direction turnDirection) {
         System.out.println("no unique place");
+        return null;
     }
 
     public void paint (Graphics2D g2) {

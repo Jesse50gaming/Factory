@@ -9,6 +9,7 @@ import com.factory.GamePanel;
 import com.factory.GUI.GUI;
 import com.factory.GUI.Hotbar;
 import com.factory.GUI.ItemContainer;
+import com.factory.buildings.Building;
 import com.factory.items.ConveyorBeltItem;
 import com.factory.items.Item;
 import com.factory.util.Direction;
@@ -38,7 +39,10 @@ public class MouseHandler implements MouseListener {
     public Direction turnDirection = Direction.UP;
     public BufferedImage placeGhost;
 
-    public Direction lastPlaceDirection;
+    public Direction lastPlaceDirection = Direction.UP;
+
+    public int mouseTileWorldX;
+    public int mouseTileWorldY;
 
     int rotateNum = 0;
     
@@ -86,6 +90,9 @@ public class MouseHandler implements MouseListener {
 
             mouseWorldX = mouseScreenX + gamePanel.player.cameraX;
             mouseWorldY = mouseScreenY + gamePanel.player.cameraY;
+
+            mouseTileWorldX = (int) Math.floor(mouseWorldX / gamePanel.tileSize);
+            mouseTileWorldY = (int) Math.floor(mouseWorldY / gamePanel.tileSize);
         }
 
         if (dropCooldown > 0) dropCooldown--;
@@ -104,7 +111,9 @@ public class MouseHandler implements MouseListener {
                 
                 if (inHand.getClass() == belt.getClass()) {
 
-                    inHand.rotate(mouseWorldX,mouseWorldY, placeDirection, turnDirection);
+                    
+
+                    inHand.rotate(mouseTileWorldX,mouseTileWorldY, placeDirection, turnDirection);
                     /* 
                     if (rotateNum % 12 == 0) {
                         turnDirection = Direction.UP;
@@ -168,13 +177,17 @@ public class MouseHandler implements MouseListener {
 
                     // place
                     if (inHand.getClass() == belt.getClass()) {
-                        inHand.uniquePlace(placeDirection, turnDirection);  
-                       
+                        Building building = inHand.uniquePlace(placeDirection, turnDirection);  
+                        if (building != null) {
+                            building.updateTexture();
+                        }
+                        
                     } else {
                         inHand.place(placeDirection);
                     }
                     
                     lastPlaceDirection = placeDirection;
+                    
                     useLeft();
                 }
             }

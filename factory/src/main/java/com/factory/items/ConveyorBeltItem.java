@@ -5,6 +5,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import com.factory.GamePanel;
+import com.factory.buildings.Building;
 import com.factory.buildings.ConveyorBelt;
 import com.factory.util.Direction;
 
@@ -47,7 +48,7 @@ public class ConveyorBeltItem extends Item {
 
 
     @Override
-    public void uniquePlace(Direction placeDirection, Direction turnDirection) {
+    public Building uniquePlace(Direction placeDirection, Direction turnDirection) {
         
 
         if(placeable) {
@@ -65,54 +66,56 @@ public class ConveyorBeltItem extends Item {
                 }
             }
             if (place) {
+                
                 stackSize--;
 
                 int placeX = mouseTileWorldX * gamePanel.tileSize;
                 int placeY = mouseTileWorldY * gamePanel.tileSize;
 
                 try {
-                    ConveyorBelt newBuilding = new ConveyorBelt(gamePanel, placeX, placeY, placeDirection);
-                    newBuilding.turnDirection = turnDirection;
-                    newBuilding.updateTexture();
+                    
+                    ConveyorBelt newBuilding = new ConveyorBelt(gamePanel, placeX, placeY, placeDirection,turnDirection);
+                    
                     gamePanel.buildings.add(newBuilding);
                     checkIfGone();
+
+                    
+                    return newBuilding;
+                    
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                
             }
+            
+
         }
+        
+        return null;
     
     }
 
     @Override
     public void rotate(int worldX, int worldY, Direction placeDirection, Direction turnDirection) {
-        boolean beltUp = false, beltDown = false, beltRight = false, beltLeft = false;
 
-        Direction lastPlaceDirection = gamePanel.mouseHandler.lastPlaceDirection;
+       
+        Direction oppositeCheckDir = placeDirection.opposite();
 
-        if (gamePanel.getConveyorBeltAtNextPosition(worldX, worldY, Direction.UP) != null) beltUp = true;
-        if (gamePanel.getConveyorBeltAtNextPosition(worldX, worldY, Direction.LEFT) != null) beltLeft = true;
-        if (gamePanel.getConveyorBeltAtNextPosition(worldX, worldY, Direction.DOWN) != null) beltDown = true;
-        if (gamePanel.getConveyorBeltAtNextPosition(worldX, worldY, Direction.RIGHT) != null) beltRight = true;
+        if (gamePanel.getConveyorBeltAtNextPosition(worldX * gamePanel.tileSize, worldY * gamePanel.tileSize, oppositeCheckDir) != null) {
 
-        if (!beltUp && !beltDown && !beltLeft && !beltRight) {
+            if (turnDirection == Direction.DOWN) {
+                turnDirection = Direction.LEFT;
+            } else if (turnDirection == Direction.LEFT) {
+                turnDirection = Direction.RIGHT;
+            } else if (turnDirection == Direction.RIGHT) {
+                turnDirection = Direction.DOWN;
+                placeDirection = placeDirection.rotate();
+            } 
+
+        } else {
             turnDirection = Direction.DOWN;
             placeDirection = placeDirection.rotate();
         }
-
-        if (gamePanel.getConveyorBeltAtNextPosition(worldX, worldY, lastPlaceDirection.opposite()) != null) {
-            if (lastPlaceDirection == Direction.UP) {
-                
-            } else if (lastPlaceDirection == Direction.LEFT) {
-
-            } else if (lastPlaceDirection == Direction.DOWN) {
-                
-            } else if (lastPlaceDirection == Direction.RIGHT) {
-                
-            }
-        }
-
-
 
         gamePanel.mouseHandler.placeDirection = placeDirection;
         gamePanel.mouseHandler.turnDirection = turnDirection;
