@@ -107,48 +107,133 @@ public class ConveyorBelt extends Building {
     public void moveItems() {
         if (itemsOnBelt == null) return;
 
-        // make copy to avoid error
-        for (Item item : new ArrayList<>(itemsOnBelt)) {
-            // move based on direciton
-            switch (direction) {
-                case LEFT -> item.worldX -= movingSpeed;
-                case RIGHT -> item.worldX += movingSpeed;
-                case UP -> item.worldY -= movingSpeed;
-                case DOWN -> item.worldY += movingSpeed;
-            }
+        if (turnDirection == Direction.DOWN) {
+            // make copy to avoid error
+            for (Item item : new ArrayList<>(itemsOnBelt)) {
+                // move based on direciton
+                switch (direction) {
+                    case LEFT -> item.worldX -= movingSpeed;
+                    case RIGHT -> item.worldX += movingSpeed;
+                    case UP -> item.worldY -= movingSpeed;
+                    case DOWN -> item.worldY += movingSpeed;
+                }
 
-            
-            boolean reachedEnd = switch (direction) {
-                case LEFT -> item.worldX + item.groundWidth <= worldX;
-                case RIGHT -> item.worldX >= worldX + width;
-                case UP -> item.worldY + item.groundHeight <= worldY;
-                case DOWN -> item.worldY >= worldY + height;
-            };
-            
-            if (reachedEnd) {
-                ConveyorBelt nextBelt = gamePanel.getConveyorBeltAtNextPosition(worldX, worldY, direction);
-                if (nextBelt != null) {
-                    
-                    gamePanel.removeItemFromAllBelts(item);
+                
+                boolean reachedEnd = switch (direction) {
+                    case LEFT -> item.worldX + item.groundWidth <= worldX;
+                    case RIGHT -> item.worldX >= worldX + width;
+                    case UP -> item.worldY + item.groundHeight <= worldY;
+                    case DOWN -> item.worldY >= worldY + height;
+                };
+                
+                if (reachedEnd) {
+                    ConveyorBelt nextBelt = gamePanel.getConveyorBeltAtNextPosition(worldX, worldY, direction);
+                    if (nextBelt != null) {
+                        
+                        gamePanel.removeItemFromAllBelts(item);
 
-                    //put at start of next belt
-                    
-                    switch (direction) {
-                        case LEFT -> item.worldX = nextBelt.worldX + nextBelt.width - item.groundWidth;
-                        case RIGHT -> item.worldX = nextBelt.worldX;
-                        case UP -> item.worldY = nextBelt.worldY + nextBelt.height - item.groundHeight;
-                        case DOWN -> item.worldY = nextBelt.worldY;
+                        //put at start of next belt
+                        
+                        switch (direction) {
+                            case LEFT -> item.worldX = nextBelt.worldX + nextBelt.width - item.groundWidth;
+                            case RIGHT -> item.worldX = nextBelt.worldX;
+                            case UP -> item.worldY = nextBelt.worldY + nextBelt.height - item.groundHeight;
+                            case DOWN -> item.worldY = nextBelt.worldY;
+                        }
+                        
+                        
+                        nextBelt.itemsOnBelt.add(item);
+                    } else {
+                        
+                        clampItemToBelt(item);
                     }
-                    
-                    
-                    nextBelt.itemsOnBelt.add(item);
                 } else {
-                    
                     clampItemToBelt(item);
                 }
-            } else {
-                clampItemToBelt(item);
             }
+        } else if (turnDirection == Direction.RIGHT) {
+            
+            for (Item item : new ArrayList<>(itemsOnBelt)) {
+
+                //movement
+                boolean insideTrack = switch (direction) {
+                    case LEFT -> item.worldY <= worldY + height / 2;
+                    case RIGHT -> item.worldY <= worldY + height / 2;
+                    case UP -> item.worldX <= worldX + width / 2;
+                    case DOWN -> item.worldX <= worldX + width / 2;
+                };
+
+                boolean reachedHalf;
+                if (insideTrack) {
+                    reachedHalf = switch (direction) {
+                        case LEFT -> item.worldX == worldX + width / 2;
+                        case RIGHT -> item.worldX == worldX;
+                        case UP -> item.worldY == worldY + height / 2;
+                        case DOWN -> item.worldY == worldY;
+                    };
+                } else {
+                    reachedHalf = switch (direction) {
+                        case LEFT -> item.worldX == worldX;
+                        case RIGHT -> item.worldX == worldX - width / 2;
+                        case UP -> item.worldY == worldY;
+                        case DOWN -> item.worldY == worldY - height /2;
+                    };
+                }
+
+                if (reachedHalf) {
+                    switch (direction) {
+                        case LEFT -> item.worldY -= movingSpeed;
+                        case RIGHT -> item.worldY += movingSpeed;
+                        case UP -> item.worldX += movingSpeed;
+                        case DOWN -> item.worldX -= movingSpeed;
+                    }
+
+                } else {
+                    switch (direction) {
+                        case LEFT -> item.worldX -= movingSpeed;
+                        case RIGHT -> item.worldX += movingSpeed;
+                        case UP -> item.worldY -= movingSpeed;
+                        case DOWN -> item.worldY += movingSpeed;
+                    }
+                }
+                
+                
+
+                
+                boolean reachedEnd = switch (direction) {
+                    case LEFT -> item.worldY + item.groundHeight <= worldY;
+                    case RIGHT -> item.worldY >= worldY + height;
+                    case UP -> item.worldX >= worldX + width;
+                    case DOWN -> item.worldX + item.groundWidth <= worldX;
+                };
+                
+                if (reachedEnd) {
+                    ConveyorBelt nextBelt = gamePanel.getConveyorBeltAtNextPosition(worldX, worldY, direction.rotate());
+                    if (nextBelt != null) {
+                        
+                        gamePanel.removeItemFromAllBelts(item);
+
+                        //put at start of next belt
+                        
+                        switch (direction) {
+                            case LEFT -> item.worldY = nextBelt.worldY + nextBelt.height - item.groundHeight;
+                            case RIGHT -> item.worldY = nextBelt.worldY;
+                            case UP -> item.worldX = nextBelt.worldX;
+                            case DOWN -> item.worldY = nextBelt.worldY;
+                        }
+                        
+                        
+                        nextBelt.itemsOnBelt.add(item);
+                    } else {
+                        
+                        clampItemToBelt(item);
+                    }
+                } else {
+                    clampItemToBelt(item);
+                }
+            }
+        } else if (turnDirection == Direction.LEFT) {
+            
         }
     }
 
