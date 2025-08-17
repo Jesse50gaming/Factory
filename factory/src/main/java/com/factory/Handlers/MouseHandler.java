@@ -36,7 +36,7 @@ public class MouseHandler implements MouseListener {
     public int rotateCooldown = 0;
 
     public Direction placeDirection = Direction.UP;
-    public Direction turnDirection = Direction.UP;
+    public Direction turnDirection = Direction.DOWN;
     public BufferedImage placeGhost;
 
     public Direction lastPlaceDirection = Direction.UP;
@@ -185,7 +185,7 @@ public class MouseHandler implements MouseListener {
                     } else {
                         inHand.place(placeDirection);
                     }
-                    
+                    turnDirection = Direction.DOWN;
                     lastPlaceDirection = placeDirection;
                     
                     useLeft();

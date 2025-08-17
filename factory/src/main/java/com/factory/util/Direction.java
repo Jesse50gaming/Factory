@@ -49,4 +49,14 @@ public enum Direction {
         }
     }
 
+
+    public Direction counterRotate() {
+        return switch (this) {
+            case UP    -> LEFT;
+            case LEFT  -> DOWN;
+            case DOWN  -> RIGHT;
+            case RIGHT -> UP;
+        };
+    }
+
 }
