@@ -116,14 +116,14 @@ public class ConveyorBelt extends Building {
                 if (hasReachedEnd(item, direction)) {
                     handleBeltTransfer(item, direction);
                 } else {
-                    clampItemToBelt(item);
+                    clampItemToBelt(item, direction);
                 }
 
             } else if (turnDirection == Direction.RIGHT || turnDirection == Direction.LEFT) {
                 // curved belt
 
                 boolean insideTrack;
-
+                //works
                 if (turnDirection == Direction.LEFT) {
                     insideTrack = switch (direction) {
                         case LEFT  -> item.worldY >= worldY + height / 2;
@@ -140,27 +140,30 @@ public class ConveyorBelt extends Building {
                     };
                 }
                 
-
+                
                 boolean inFirstHalf = isInFirstHalf(item, direction,insideTrack);
-
+                
                 Direction turnDir = (turnDirection == Direction.RIGHT) ? direction.rotate() : direction.counterRotate();
 
                 if (inFirstHalf) {
                     moveInDirection(item, direction);
                 } else {
+                    
                     moveInDirection(item, turnDir);
                 }
 
                 if (hasReachedEnd(item, turnDir)) {
                     handleBeltTransfer(item, turnDir);
                 } else {
-                    clampItemToBelt(item);
+                    if (inFirstHalf) clampItemToBelt(item,direction);
+                    if (!inFirstHalf) clampItemToBelt(item, turnDir);
+                    
                 }
             }
         }
     }
 
-    private void clampItemToBelt(Item item) {
+    private void clampItemToBelt(Item item, Direction direction) {
         ConveyorBelt nextBelt = gamePanel.getConveyorBeltAtNextPosition(worldX, worldY, direction);
 
         if (nextBelt != null) {
@@ -231,22 +234,25 @@ public class ConveyorBelt extends Building {
 
     private boolean isInFirstHalf(Item item, Direction dir,boolean insideTrack) {
 
+        boolean inFirstHalf;
+
         if (insideTrack) {
-            return switch (dir) {
-                case LEFT  -> item.worldX <= worldX + width / 2;
-                case RIGHT -> item.worldX >= worldX + width / 2;
+            inFirstHalf = switch (dir) {
+                case LEFT  -> item.worldX >= worldX + width / 2;
+                case RIGHT -> item.worldX + item.groundWidth <= worldX + width / 2;
                 case UP -> item.worldY >= worldY + height / 2;
-                case DOWN  -> item.worldY<= worldY + height / 2;
+                case DOWN  -> item.worldY + item.groundHeight <= worldY + height / 2;
             };
         } else {
-            return switch (dir) {
-                case LEFT  -> item.worldX == worldX;
-                case RIGHT -> item.worldX + item.groundWidth == worldX + width;
-                case UP -> item.worldY == worldY;
-                case DOWN  -> item.worldY + item.groundHeight == worldY + height;
+            inFirstHalf = switch (dir) {
+                case LEFT  -> item.worldX >= worldX;
+                case RIGHT -> item.worldX + item.groundWidth <= worldX + width;
+                case UP -> item.worldY >= worldY;
+                case DOWN  -> item.worldY + item.groundHeight <= worldY + height;
             };
         }
-        
+
+        return inFirstHalf;
     }
 
     private boolean hasReachedEnd(Item item, Direction dir) {
@@ -269,7 +275,7 @@ public class ConveyorBelt extends Building {
             snapToStartOfNextBelt(item, nextBelt, exitDir);
             nextBelt.itemsOnBelt.add(item);
         } else {
-            clampItemToBelt(item);
+            clampItemToBelt(item, exitDir);
         }
     }
 
