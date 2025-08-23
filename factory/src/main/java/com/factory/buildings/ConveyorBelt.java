@@ -116,27 +116,27 @@ public class ConveyorBelt extends Building {
                 if (hasReachedEnd(item, direction)) {
                     handleBeltTransfer(item, direction);
                 } else {
-                    clampItemToBelt(item, direction);
+                    clampItemToBelt(item, direction,Direction.DOWN);
                 }
 
             } else if (turnDirection == Direction.RIGHT || turnDirection == Direction.LEFT) {
                 // curved belt
 
                 boolean insideTrack;
-                //works
+                
                 if (turnDirection == Direction.LEFT) {
                     insideTrack = switch (direction) {
-                        case LEFT  -> item.worldY >= worldY + height / 2;
-                        case RIGHT -> item.worldY <= worldY + height / 2;
-                        case UP    -> item.worldX <= worldX + width / 2;
-                        case DOWN  -> item.worldX >= worldX + width / 2;
+                        case LEFT  -> item.worldY > worldY + height / 2;
+                        case RIGHT -> item.worldY < worldY + height / 2;
+                        case UP    -> item.worldX < worldX + width / 2;
+                        case DOWN  -> item.worldX > worldX + width / 2;
                     };
                 } else {
                     insideTrack = switch (direction) {
-                        case LEFT  -> item.worldY <= worldY + height / 2;
-                        case RIGHT -> item.worldY >= worldY + height / 2;
-                        case UP    -> item.worldX >= worldX + width / 2;
-                        case DOWN  -> item.worldX <= worldX + width / 2;
+                        case LEFT  -> item.worldY < worldY + height / 2;
+                        case RIGHT -> item.worldY > worldY + height / 2;
+                        case UP    -> item.worldX > worldX + width / 2;
+                        case DOWN  -> item.worldX < worldX + width / 2;
                     };
                 }
                 
@@ -155,16 +155,21 @@ public class ConveyorBelt extends Building {
                 if (hasReachedEnd(item, turnDir)) {
                     handleBeltTransfer(item, turnDir);
                 } else {
-                    if (inFirstHalf) clampItemToBelt(item,direction);
-                    if (!inFirstHalf) clampItemToBelt(item, turnDir);
+                    if (inFirstHalf) clampItemToBelt(item,direction,turnDirection);
+                    if (!inFirstHalf) clampItemToBelt(item, turnDir,Direction.DOWN);
                     
                 }
             }
         }
     }
 
-    private void clampItemToBelt(Item item, Direction direction) {
-        ConveyorBelt nextBelt = gamePanel.getConveyorBeltAtNextPosition(worldX, worldY, direction);
+    private void clampItemToBelt(Item item, Direction direction, Direction turnDirection) {
+        ConveyorBelt nextBelt;
+
+        nextBelt = gamePanel.getConveyorBeltAtNextPosition(worldX, worldY, direction); 
+
+        if (turnDirection == Direction.RIGHT) nextBelt = gamePanel.getConveyorBeltAtNextPosition(worldX, worldY, direction.rotate());
+        if (turnDirection == Direction.LEFT) nextBelt = gamePanel.getConveyorBeltAtNextPosition(worldX, worldY, direction.counterRotate());
 
         if (nextBelt != null) {
             switch (direction) {
@@ -241,17 +246,17 @@ public class ConveyorBelt extends Building {
                 case LEFT  -> item.worldX >= worldX + width / 2;
                 case RIGHT -> item.worldX + item.groundWidth <= worldX + width / 2;
                 case UP -> item.worldY >= worldY + height / 2;
-                case DOWN  -> item.worldY + item.groundHeight <= worldY + height / 2;
+                case DOWN  -> item.worldY <= worldY + height / 2;
             };
         } else {
             inFirstHalf = switch (dir) {
-                case LEFT  -> item.worldX >= worldX;
+                case LEFT  -> item.worldX > worldX;
                 case RIGHT -> item.worldX + item.groundWidth <= worldX + width;
-                case UP -> item.worldY >= worldY;
-                case DOWN  -> item.worldY + item.groundHeight <= worldY + height;
+                case UP -> item.worldY > worldY;
+                case DOWN  -> item.worldY < worldY + height/2;
             };
         }
-
+        
         return inFirstHalf;
     }
 
@@ -275,7 +280,7 @@ public class ConveyorBelt extends Building {
             snapToStartOfNextBelt(item, nextBelt, exitDir);
             nextBelt.itemsOnBelt.add(item);
         } else {
-            clampItemToBelt(item, exitDir);
+            clampItemToBelt(item, exitDir,Direction.DOWN);
         }
     }
 
